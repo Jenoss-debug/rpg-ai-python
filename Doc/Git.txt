@@ -1,0 +1,23 @@
+1 - pour relier un dossier local à un Repo sur GitHub
+
+Depuis ton dossier local :
+> git init
+> git status
+
+> git remote add origin https://github.com/ton-compte/ton-repo.git
+
+(pour annuler)
+> git remote remove origin
+
+Puis :
+> git pull origin master --allow-unrelated-histories
+(pour ramener les fichiers défférent du repo)
+
+Si pas encore fait :
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+
+> git add .
+> git commit -m "Premier moteur de combat Python"
+> git push origin master
