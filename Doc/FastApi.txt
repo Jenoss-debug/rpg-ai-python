@@ -1,0 +1,27 @@
+Installer :
+pip install fastapi uvicorn
+
+
+Lancer le serveur local :
+python -m uvicorn main:app --reload
+ou
+python -m uvicorn serverFastApi:serveur_rpg --reload
+
+> fichier:variable
+
+Ctrl + C pour arreter le serveur
+
+
+Se connecter depuis le nav :
+http://127.0.0.1:8000
+ou
+http://localhost:8000/
+
+127.0.0.1:8000 → FastAPI
+127.0.0.1:3306 → MySQL
+127.0.0.1:5432 → PostgreSQL
+127.0.0.1:8080 → autre serveur
+
+
+voir le Swagger : 
+http://127.0.0.1:8000/docs
