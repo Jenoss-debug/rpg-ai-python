@@ -4,45 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Angémoniaque - Faction Marchande</title>
-
+    <title>Accueil - Angémoniaque</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
 <body>
 
-    <header>
-        <h1>Angémoniaque</h1>
-
-        <nav>
-            <a href="/">Accueil</a>
-            <a href="/trajets">Calculateur de trajets</a>
-            <a href="/crm">Gestion commerciale</a>
-        </nav>
-    </header>
-
     <main>
-        <h2>Bienvenue dans notre faction marchande</h2>
+        <h1>Bienvenue sur Angémoniaque !</h1>
 
-        <p>
-            Plateforme de gestion des livraisons,
-            des coursiers et des clients du royaume.
+        <p>Connecté en tant que :
+            <strong>{{ utilisateur.username }}</strong>
         </p>
 
-        <div class="actions">
-            <button onclick="alert('Le calculateur arrivera bientôt !')">
-                Calculateur de trajets
-            </button>
+        <p>Rôle : {{ utilisateur.role }}</p>
 
-            <button onclick="alert('Le CRM arrivera bientôt !')">
-                Gestion commerciale
-            </button>
-        </div>
+        <form action="/logout" method="post">
+            <button type="submit">Se déconnecter</button>
+        </form>
     </main>
-
-    <footer>
-        Faction Marchande - Angémoniaque
-    </footer>
 
 </body>
 
