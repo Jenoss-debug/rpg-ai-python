@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <h1>Administration</h1>
+    <p>Bienvenue, {{ utilisateur.username }}. Voici un aperçu de l’activité.</p>
+
+    <div class="stat-cards">
+        <article class="stat-card">
+            <h2>Coursiers</h2>
+            <p class="stat-value">{{ nombre_coursiers }}</p>
+        </article>
+        <article class="stat-card">
+            <h2>Livraisons</h2>
+            <p class="stat-value">{{ nombre_livraisons }}</p>
+        </article>
+    </div>
+    <p><a href="/admin/test">Vérifier l’accès administrateur</a></p>
+</section>
+{% endblock %}

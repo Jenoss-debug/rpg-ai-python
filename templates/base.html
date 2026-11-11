@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Médiéval Relais{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <header>
+        <a class="brand" href="/">Médiéval Relais</a>
+        <nav aria-label="Navigation principale">
+            <a href="/">Accueil</a>
+            {% if utilisateur.role == "admin" %}
+            <a href="/admin">Administration</a>
+            {% elif utilisateur.role == "coursier" %}
+            <a href="/coursier">Mon espace coursier</a>
+            {% endif %}
+            <form action="/logout" method="post">
+                <button class="logout-button" type="submit">Se déconnecter</button>
+            </form>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>

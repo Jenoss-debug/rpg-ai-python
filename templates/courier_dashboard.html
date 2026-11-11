@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Mon espace coursier - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <h1>Mes livraisons</h1>
+    <p>Bonjour {{ utilisateur.username }}, seules vos livraisons vous sont affichées.</p>
+
+    {% if livraisons %}
+    <div class="delivery-list">
+        {% for livraison in livraisons %}
+        <article class="delivery-card">
+            <h2>{{ livraison.reference }} — {{ livraison.destinataire }}</h2>
+            <p>{{ livraison.secteur_depart }} → {{ livraison.secteur_arrivee }}</p>
+            <p>{{ livraison.description }}</p>
+            <p>Statut : <strong>{{ libelles_statuts.get(livraison.statut, livraison.statut) }}</strong></p>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Aucune livraison ne vous est attribuée pour le moment.</p>
+    {% endif %}
+</section>
+{% endblock %}

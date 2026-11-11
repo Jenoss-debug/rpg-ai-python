@@ -51,3 +51,17 @@ def exiger_admin(
         )
 
     return utilisateur
+
+
+def exiger_coursier(
+    utilisateur: Utilisateur = Depends(exiger_connexion)
+):
+    """Réserve l'accès aux coursiers."""
+
+    if utilisateur.role != "coursier":
+        raise HTTPException(
+            status_code=403,
+            detail="Accès réservé aux coursiers."
+        )
+
+    return utilisateur

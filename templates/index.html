@@ -1,29 +1,18 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Angémoniaque</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+{% block title %}Accueil - Médiéval Relais{% endblock %}
 
-<body>
+{% block content %}
+<section class="welcome">
+    <h1>Bienvenue, {{ utilisateur.username }} !</h1>
+    <p>Vous êtes connecté avec le rôle <strong>{{ utilisateur.role }}</strong>.</p>
 
-    <main>
-        <h1>Bienvenue sur Angémoniaque !</h1>
-
-        <p>Connecté en tant que :
-            <strong>{{ utilisateur.username }}</strong>
-        </p>
-
-        <p>Rôle : {{ utilisateur.role }}</p>
-
-        <form action="/logout" method="post">
-            <button type="submit">Se déconnecter</button>
-        </form>
-    </main>
-
-</body>
-
-</html>
+    {% if utilisateur.role == "admin" %}
+    <p>Accédez à l’administration pour suivre l’activité de Médiéval Relais.</p>
+    <a class="button-link" href="/admin">Ouvrir l’administration</a>
+    {% elif utilisateur.role == "coursier" %}
+    <p>Retrouvez ici les livraisons qui vous sont attribuées.</p>
+    <a class="button-link" href="/coursier">Ouvrir mon espace coursier</a>
+    {% endif %}
+</section>
+{% endblock %}

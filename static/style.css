@@ -11,25 +11,30 @@ body {
 
 header {
     background-color: #252c3a;
-    padding: 20px 40px;
+    padding: 16px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 24px;
 }
 
-header h1 {
+.brand {
     color: #d8ad61;
-    margin: 0;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-decoration: none;
 }
 
 nav {
     display: flex;
-    gap: 25px;
+    align-items: center;
+    gap: 20px;
 }
 
 nav a {
     color: #eeeeee;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 nav a:hover {
@@ -38,40 +43,75 @@ nav a:hover {
 
 main {
     max-width: 1000px;
-    margin: 100px auto;
-    text-align: center;
+    margin: 60px auto;
     padding: 20px;
 }
 
+main h1,
 main h2 {
     color: #d8ad61;
 }
 
-.actions {
-    margin-top: 40px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+.welcome,
+.dashboard {
+    text-align: center;
+}
+
+.button-link {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 12px 20px;
+    background-color: #9b7135;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.button-link:hover,
+button:hover {
+    background-color: #bd914f;
 }
 
 button {
-    padding: 15px 25px;
+    padding: 10px 14px;
     background-color: #9b7135;
     color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 14px;
 }
 
-button:hover {
-    background-color: #bd914f;
+.stat-cards,
+.delivery-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+    text-align: left;
 }
 
-footer {
-    text-align: center;
-    color: #888888;
-    padding: 30px;
+.stat-card,
+.delivery-card,
+.empty-state {
+    padding: 20px;
+    background-color: #252c3a;
+    border-radius: 8px;
+}
+
+.stat-card h2,
+.delivery-card h2 {
+    margin-top: 0;
+}
+
+.stat-value {
+    margin-bottom: 0;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.dashboard > p > a {
+    color: #d8ad61;
 }
 
 
@@ -119,4 +159,22 @@ main button {
 .erreur {
     color: #c62828;
     text-align: center;
+}
+
+@media (max-width: 650px) {
+    header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 16px 20px;
+    }
+
+    nav {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    main {
+        margin: 32px auto;
+    }
 }
