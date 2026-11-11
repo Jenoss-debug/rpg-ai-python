@@ -1,15 +1,14 @@
-from database.base import Base
-from database.connexion import engine
+from pathlib import Path
 
-# Import des modèles pour les enregistrer dans Base.metadata
-from database import models
+from alembic import command
+from alembic.config import Config
 
 
 def initialiser_bdd():
+    config_path = Path(__file__).resolve().parents[1] / "alembic.ini"
+    command.upgrade(Config(str(config_path)), "head")
 
-    Base.metadata.create_all(bind=engine)
-
-    print("Initialisation de la base terminée !")
+    print("Base de données mise à niveau jusqu'à la dernière révision !")
 
 
 if __name__ == "__main__":

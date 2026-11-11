@@ -6,3 +6,4 @@ psycopg[binary]
 argon2-cffi
 python-multipart
 itsdangerous
+alembic>=1.16
