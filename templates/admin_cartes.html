@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des cartes - Médiéval Relais{% endblock %}
+
+{% block body_class %}map-canvas-page{% endblock %}
+
+{% block main_class %}route-planner-main{% endblock %}
+
+{% block content %}
+<section class="route-planner admin-map">
+    <div class="route-grid-frame">
+        <canvas
+            id="admin-map-grid"
+            class="hex-grid-canvas"
+            role="img"
+            aria-label="Carte Terre Neutre, quadrillage hexagonal de 100 colonnes et 100 lignes"
+        >Votre navigateur ne prend pas en charge l’affichage du quadrillage.</canvas>
+        <div class="canvas-overlays">
+            {% set map_heading = "Gestion des cartes" %}
+            {% set map_subheading = "Terre Neutre" %}
+            {% include "_map_title_panel.html" %}
+            <section class="canvas-overlay-panel canvas-overlay-panel--top-left">
+                <label class="coordinates-toggle" for="admin-map-show-coordinates">
+                    <input id="admin-map-show-coordinates" type="checkbox">
+                    Afficher les coordonnées
+                </label>
+            </section>
+            {% include "_selected_cell_panel.html" %}
+        </div>
+    </div>
+</section>
+<script type="module" src="/static/admin-map.js"></script>
+{% endblock %}

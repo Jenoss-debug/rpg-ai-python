@@ -13,6 +13,15 @@ from routers.private import router as private_router
 # Application
 serveur_rpg = FastAPI()
 
+
+@serveur_rpg.middleware("http")
+async def revalider_moteur_hexagonal(request, call_next):
+    response = await call_next(request)
+    if request.url.path == "/static/hex-grid.js":
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 # Clé secrète obligatoire pour signer les sessions
 SESSION_SECRET = os.getenv("SESSION_SECRET")
 if not SESSION_SECRET:

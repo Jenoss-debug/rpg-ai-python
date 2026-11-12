@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <header>
         <a class="brand" href="/">Médiéval Relais</a>
         <nav aria-label="Navigation principale">
             <a href="/">Accueil</a>
             {% if utilisateur.role == "admin" %}
             <a href="/admin">Administration</a>
+            <a href="/admin/cartes">Gestion des cartes</a>
             {% elif utilisateur.role == "coursier" %}
             <a href="/coursier">Mon espace coursier</a>
             {% endif %}

@@ -1,6 +1,8 @@
 /**
  * Pages can customize gestures and pass overlay elements as interaction blockers.
  */
+const INITIAL_ZOOM = 0.45;
+
 export function createHexGrid(canvas, options = {}) {
     if (!(canvas instanceof HTMLCanvasElement)) {
         throw new TypeError("A canvas element is required.");
@@ -56,7 +58,10 @@ export function createHexGrid(canvas, options = {}) {
     let width = 0;
     let height = 0;
     let pixelRatio = 1;
-    let zoom = Math.max(minZoom, Math.min(maxZoom, options.initialZoom ?? 1));
+    let zoom = Math.max(
+        minZoom,
+        Math.min(maxZoom, options.initialZoom ?? INITIAL_ZOOM)
+    );
     let offsetX = 0;
     let offsetY = 0;
     let hoveredCell = null;

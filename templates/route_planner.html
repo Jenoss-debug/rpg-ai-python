@@ -2,28 +2,26 @@
 
 {% block title %}Préparation des itinéraires - Médiéval Relais{% endblock %}
 
+{% block body_class %}map-canvas-page{% endblock %}
+
 {% block main_class %}route-planner-main{% endblock %}
 
 {% block content %}
 <section class="route-planner">
-    <h1>Préparation des itinéraires</h1>
-    <p>Quadrillage de la carte. Le calcul des itinéraires n’est pas encore activé.</p>
     <div class="route-grid-frame">
-        <canvas
-            id="route-grid"
-            role="img"
-            aria-label="Quadrillage hexagonal à pointes gauche et droite"
-        >Votre navigateur ne prend pas en charge l’affichage du quadrillage.</canvas>
+        <canvas id="route-grid" class="hex-grid-canvas" role="img" aria-label="Quadrillage hexagonal à pointes gauche et droite">Votre
+            navigateur ne prend pas en charge l’affichage du quadrillage.</canvas>
         <div class="canvas-overlays">
+            {% set map_heading = "Préparation des itinéraires" %}
+            {% set map_subheading = "" %}
+            {% include "_map_title_panel.html" %}
             <section class="canvas-overlay-panel canvas-overlay-panel--top-left">
                 <label class="coordinates-toggle" for="show-coordinates">
                     <input id="show-coordinates" type="checkbox">
                     Afficher les coordonnées
                 </label>
             </section>
-            <section class="canvas-overlay-panel canvas-overlay-panel--bottom-right">
-                <p class="selected-coordinate">Case sélectionnée : <output id="selected-coordinate">Aucune</output></p>
-            </section>
+            {% include "_selected_cell_panel.html" %}
         </div>
     </div>
 </section>

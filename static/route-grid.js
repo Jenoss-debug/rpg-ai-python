@@ -1,11 +1,14 @@
 import { createHexGrid } from "./hex-grid.js";
+import { createSelectedCellPanel } from "./selected-cell-panel.js";
 
 const canvas = document.getElementById("route-grid");
 const coordinatesToggle = document.getElementById("show-coordinates");
-const selectionOutput = document.getElementById("selected-coordinate");
 const overlays = document.querySelector(".canvas-overlays");
 
 if (canvas instanceof HTMLCanvasElement) {
+    const updateSelectedCellPanel = createSelectedCellPanel(
+        document.querySelector(".map-cell-details")
+    );
     const grid = createHexGrid(canvas, {
         columns: 100,
         rows: 100,
@@ -17,11 +20,7 @@ if (canvas instanceof HTMLCanvasElement) {
         interactionBlockers: overlays ? [overlays] : [],
         showCoordinates: coordinatesToggle?.checked ?? false,
         onSelectionChange(cell) {
-            if (selectionOutput) {
-                selectionOutput.textContent = cell
-                    ? `${cell.x};${cell.y}`
-                    : "Aucune";
-            }
+            updateSelectedCellPanel(cell);
         }
     });
 
