@@ -1,8 +1,19 @@
 from fastapi import Depends, HTTPException, Request
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from database.connexion import get_db
-from database.models import Utilisateur
+from database.models import Grade, Personnage, Utilisateur
+
+
+def a_personnage_avec_grade(utilisateur: Utilisateur, db: Session) -> bool:
+    personnage_id = db.scalar(
+        select(Personnage.id)
+        .join(Grade, Personnage.grade_id == Grade.id)
+        .where(Personnage.utilisateur_id == utilisateur.id)
+        .limit(1)
+    )
+    return personnage_id is not None
 
 
 def obtenir_utilisateur_connecte(
@@ -65,3 +76,24 @@ def exiger_coursier(
         )
 
     return utilisateur
+
+
+def exiger_acces_preparation_itineraires(
+    utilisateur: Utilisateur = Depends(exiger_connexion),
+    db: Session = Depends(get_db)
+):
+    """Autorise les administrateurs et les coursiers ayant un personnage."""
+
+    if utilisateur.role == "admin":
+        return utilisateur
+
+    if (
+        utilisateur.role == "coursier"
+        and a_personnage_avec_grade(utilisateur, db)
+    ):
+        return utilisateur
+
+    raise HTTPException(
+        status_code=403,
+        detail="Accès réservé aux administrateurs et aux coursiers ayant un personnage avec un grade."
+    )

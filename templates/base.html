@@ -18,13 +18,16 @@
             {% elif utilisateur.role == "coursier" %}
             <a href="/coursier">Mon espace coursier</a>
             {% endif %}
+            {% if peut_preparer_itineraires %}
+            <a href="/preparation-itineraires">Préparer un itinéraire</a>
+            {% endif %}
             <form action="/logout" method="post">
                 <button class="logout-button" type="submit">Se déconnecter</button>
             </form>
         </nav>
     </header>
 
-    <main>
+    <main class="{% block main_class %}{% endblock %}">
         {% block content %}{% endblock %}
     </main>
 </body>

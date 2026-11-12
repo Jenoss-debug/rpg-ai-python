@@ -4,10 +4,11 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from database.connexion import get_db
-from database.models import Livraison
-from database.models import Utilisateur
+from database.models import Livraison, Utilisateur
 from dependencies.auth import (
+    a_personnage_avec_grade,
     exiger_admin,
+    exiger_acces_preparation_itineraires,
     exiger_coursier,
     obtenir_utilisateur_connecte
 )
@@ -25,7 +26,8 @@ LIBELLES_STATUTS = {
 @router.get("/")
 def accueil(
     request: Request,
-    utilisateur: Utilisateur = Depends(obtenir_utilisateur_connecte)
+    utilisateur: Utilisateur = Depends(obtenir_utilisateur_connecte),
+    db: Session = Depends(get_db)
 ):
     if utilisateur is None:
         return RedirectResponse(url="/login", status_code=303)
@@ -33,7 +35,13 @@ def accueil(
     return templates.TemplateResponse(
         request=request,
         name="index.html",
-        context={"utilisateur": utilisateur}
+        context={
+            "utilisateur": utilisateur,
+            "peut_preparer_itineraires": (
+                utilisateur.role == "admin"
+                or a_personnage_avec_grade(utilisateur, db)
+            )
+        }
     )
 
 
@@ -58,7 +66,8 @@ def tableau_admin(
         context={
             "utilisateur": utilisateur,
             "nombre_coursiers": nombre_coursiers,
-            "nombre_livraisons": nombre_livraisons
+            "nombre_livraisons": nombre_livraisons,
+            "peut_preparer_itineraires": True
         }
     )
 
@@ -81,6 +90,25 @@ def tableau_coursier(
         context={
             "utilisateur": utilisateur,
             "livraisons": livraisons,
-            "libelles_statuts": LIBELLES_STATUTS
+            "libelles_statuts": LIBELLES_STATUTS,
+            "peut_preparer_itineraires": a_personnage_avec_grade(
+                utilisateur,
+                db
+            )
+        }
+    )
+
+
+@router.get("/preparation-itineraires")
+def preparation_itineraires(
+    request: Request,
+    utilisateur: Utilisateur = Depends(exiger_acces_preparation_itineraires)
+):
+    return templates.TemplateResponse(
+        request=request,
+        name="route_planner.html",
+        context={
+            "utilisateur": utilisateur,
+            "peut_preparer_itineraires": True
         }
     )

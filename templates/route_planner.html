@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Préparation des itinéraires - Médiéval Relais{% endblock %}
+
+{% block main_class %}route-planner-main{% endblock %}
+
+{% block content %}
+<section class="route-planner">
+    <h1>Préparation des itinéraires</h1>
+    <p>Quadrillage de la carte. Le calcul des itinéraires n’est pas encore activé.</p>
+    <div class="route-grid-toolbar">
+        <label class="coordinates-toggle" for="show-coordinates">
+            <input id="show-coordinates" type="checkbox">
+            Afficher les coordonnées
+        </label>
+        <p class="selected-coordinate">Case sélectionnée : <output id="selected-coordinate">Aucune</output></p>
+    </div>
+    <div class="route-grid-frame">
+        <canvas
+            id="route-grid"
+            role="img"
+            aria-label="Quadrillage hexagonal à pointes gauche et droite"
+        >Votre navigateur ne prend pas en charge l’affichage du quadrillage.</canvas>
+    </div>
+</section>
+<script src="/static/route-grid.js" defer></script>
+{% endblock %}

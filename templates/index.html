@@ -14,5 +14,8 @@
     <p>Retrouvez ici les livraisons qui vous sont attribuées.</p>
     <a class="button-link" href="/coursier">Ouvrir mon espace coursier</a>
     {% endif %}
+    {% if peut_preparer_itineraires %}
+    <p><a class="button-link" href="/preparation-itineraires">Préparer un itinéraire</a></p>
+    {% endif %}
 </section>
 {% endblock %}
