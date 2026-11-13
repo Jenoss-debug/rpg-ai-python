@@ -25,6 +25,20 @@
                     Afficher les coordonnées
                 </label>
             </section>
+            <section class="canvas-overlay-panel canvas-overlay-panel--bottom-left map-editor-panel">
+                <div class="map-mode-picker" role="group" aria-label="Mode de la carte">
+                    <button type="button" data-map-mode="selection" aria-pressed="true">Sélection</button>
+                    <button type="button" data-map-mode="edition" aria-pressed="false">Édition</button>
+                </div>
+                <div id="terrain-tools" class="map-terrain-tools" hidden>
+                    <h2>Terrain</h2>
+                    <div id="terrain-picker" class="terrain-picker" role="group" aria-label="Choisir un terrain"></div>
+                    <section id="variant-tools" class="variant-tools" hidden>
+                        <h3 id="variant-heading">Variantes graphiques</h3>
+                        <div id="variant-picker" class="variant-picker" role="group" aria-label="Choisir une variante"></div>
+                    </section>
+                </div>
+            </section>
             {% include "_selected_cell_panel.html" %}
         </div>
     </div>

@@ -5,13 +5,24 @@ export function createSelectedCellPanel(panel) {
 
     const selectedX = panel.querySelector("#selected-cell-x");
     const selectedY = panel.querySelector("#selected-cell-y");
+    const selectedTerrain = panel.querySelector("#selected-cell-terrain");
+    const selectedCost = panel.querySelector("#selected-cell-cost");
+    const selectedVariant = panel.querySelector("#selected-cell-variant");
     if (!(selectedX instanceof HTMLOutputElement)
-        || !(selectedY instanceof HTMLOutputElement)) {
-        throw new Error("The selected-cell panel is missing coordinate outputs.");
+        || !(selectedY instanceof HTMLOutputElement)
+        || !(selectedTerrain instanceof HTMLOutputElement)
+        || !(selectedCost instanceof HTMLOutputElement)
+        || !(selectedVariant instanceof HTMLOutputElement)) {
+        throw new Error("The selected-cell panel is missing required outputs.");
     }
 
-    return (cell) => {
+    return (cell, details = null) => {
         selectedX.textContent = cell ? String(cell.x) : "—";
         selectedY.textContent = cell ? String(cell.y) : "—";
+        selectedTerrain.textContent = details?.terrainName ?? "Non défini";
+        selectedCost.textContent = details?.entryCostLabel ?? "—";
+        selectedVariant.textContent = details?.variant == null
+            ? "—"
+            : String(details.variant);
     };
 }

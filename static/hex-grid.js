@@ -188,14 +188,6 @@ export function createHexGrid(canvas, options = {}) {
 
         const isHovered = sameCell(cell, hoveredCell);
         const isSelected = sameCell(cell, selectedCell);
-        if (isHovered) {
-            context.fillStyle = "rgba(255, 255, 255, 0.1)";
-            context.fill();
-        } else if (isSelected) {
-            context.fillStyle = "rgba(216, 173, 97, 0.2)";
-            context.fill();
-        }
-
         options.onCellRender?.(context, cell, {
             centerX,
             centerY,
@@ -203,6 +195,14 @@ export function createHexGrid(canvas, options = {}) {
             width: hexWidth,
             height: hexHeight
         });
+
+        if (isHovered) {
+            context.fillStyle = "rgba(255, 255, 255, 0.1)";
+            context.fill();
+        } else if (isSelected) {
+            context.fillStyle = "rgba(216, 173, 97, 0.2)";
+            context.fill();
+        }
 
         context.strokeStyle = isHovered
             ? "rgba(255, 255, 255, 0.9)"
