@@ -497,6 +497,7 @@ export function createHexGrid(canvas, options = {}) {
 
         const mapX = (event.offsetX - offsetX) / zoom;
         const mapY = (event.offsetY - offsetY) / zoom;
+        const zoomingIn = event.deltaY < 0;
         zoom = nextZoom;
         const anchoredOffsetX = event.offsetX - mapX * zoom;
         const anchoredOffsetY = event.offsetY - mapY * zoom;
@@ -509,20 +510,24 @@ export function createHexGrid(canvas, options = {}) {
         );
         const anchorWeight = recenterProgress * recenterProgress
             * (3 - 2 * recenterProgress);
-        offsetX = recenterOffset(
-            anchoredOffsetX,
-            width,
-            mapLeft,
-            mapRight,
-            anchorWeight
-        );
-        offsetY = recenterOffset(
-            anchoredOffsetY,
-            height,
-            mapTop,
-            mapBottom,
-            anchorWeight
-        );
+        offsetX = zoomingIn
+            ? anchoredOffsetX
+            : recenterOffset(
+                anchoredOffsetX,
+                width,
+                mapLeft,
+                mapRight,
+                anchorWeight
+            );
+        offsetY = zoomingIn
+            ? anchoredOffsetY
+            : recenterOffset(
+                anchoredOffsetY,
+                height,
+                mapTop,
+                mapBottom,
+                anchorWeight
+            );
         constrainOffsets();
         setHoveredCell(
             pointerIsInsideCanvas(event)

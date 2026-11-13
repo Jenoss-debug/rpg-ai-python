@@ -2,6 +2,16 @@
 
 Application Python avec FastAPI, SQLAlchemy, PostgreSQL et Alembic.
 
+Composition :
+- FastAPI et ses routers pour organiser les différentes fonctionnalités.
+- Les modèles SQLAlchemy qui représentent les données.
+- Les connexions à PostgreSQL.
+- Alembic pour faire évoluer la structure de la base.
+- Les templates HTML et les fichiers JavaScript.
+- Les dépendances d'authentification et les droits d'accès.
+- Deux environnements de base de données : local et Render.
+
+
 ## Tester les espaces par rôle
 
 Les pages `/admin` et `/coursier` exigent une session valide et le rôle
