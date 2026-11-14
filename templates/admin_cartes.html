@@ -25,6 +25,15 @@
                     Afficher les coordonnées
                 </label>
             </section>
+            <section
+                class="canvas-overlay-panel canvas-overlay-panel--top-right map-save-panel"
+                aria-label="Sauvegarde de la carte"
+            >
+                <p id="admin-map-save-status" role="status" aria-live="polite">
+                    Chargement de la carte…
+                </p>
+                <button id="admin-map-save" type="button" disabled>Enregistrer</button>
+            </section>
             <section class="canvas-overlay-panel canvas-overlay-panel--bottom-left map-editor-panel">
                 <div class="map-mode-picker" role="group" aria-label="Mode de la carte">
                     <button type="button" data-map-mode="selection" aria-pressed="true">Sélection</button>

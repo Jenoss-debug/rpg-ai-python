@@ -22,6 +22,60 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.base import Base
 
 
+class Carte(Base):
+    __tablename__ = "cartes"
+
+    __table_args__ = (
+        CheckConstraint(
+            "largeur > 0 AND hauteur > 0",
+            name="ck_cartes_dimensions_positives"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    code: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    nom: Mapped[str] = mapped_column(String(100), nullable=False)
+    largeur: Mapped[int] = mapped_column(Integer, nullable=False)
+    hauteur: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    cases: Mapped[list[CaseCarte]] = relationship(
+        back_populates="carte",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
+
+class CaseCarte(Base):
+    __tablename__ = "cases_carte"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "carte_id",
+            "x",
+            "y",
+            name="uq_cases_carte_carte_id_x_y"
+        ),
+        CheckConstraint("x >= 0", name="ck_cases_carte_x_non_negatif"),
+        CheckConstraint("y >= 0", name="ck_cases_carte_y_non_negatif"),
+        CheckConstraint(
+            "variant BETWEEN 1 AND 4",
+            name="ck_cases_carte_variant"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    carte_id: Mapped[int] = mapped_column(
+        ForeignKey("cartes.id", ondelete="CASCADE"),
+        nullable=False
+    )
+    x: Mapped[int] = mapped_column(Integer, nullable=False)
+    y: Mapped[int] = mapped_column(Integer, nullable=False)
+    terrain_code: Mapped[str] = mapped_column(String(40), nullable=False)
+    variant: Mapped[int] = mapped_column(Integer, nullable=False)
+
+    carte: Mapped[Carte] = relationship(back_populates="cases")
+
+
 class Utilisateur(Base):
 
     __tablename__ = "utilisateurs"

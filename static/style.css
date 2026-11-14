@@ -181,6 +181,11 @@ button {
     left: 12px;
 }
 
+.canvas-overlay-panel--top-right {
+    top: 12px;
+    right: 12px;
+}
+
 .canvas-overlay-panel--top-center {
     top: 12px;
     left: 50%;
@@ -196,6 +201,52 @@ button {
 .canvas-overlay-panel--bottom-left {
     bottom: 12px;
     left: 12px;
+}
+
+.map-save-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.map-save-panel p {
+    max-width: 220px;
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.map-save-panel [data-state="success"] {
+    color: #b9e8c5;
+}
+
+.map-save-panel [data-state="error"] {
+    color: #ffb4a9;
+}
+
+.map-save-panel [data-state="pending"] {
+    color: #f0d99c;
+}
+
+.map-save-panel button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.route-map-status-panel p {
+    max-width: 220px;
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.route-map-status-panel p[data-state="success"] {
+    color: #b9e8c5;
+}
+
+.route-map-status-panel p[data-state="error"] {
+    color: #ffb4a9;
 }
 
 .map-editor-panel {
@@ -451,6 +502,11 @@ body.map-canvas-page .route-grid-frame {
     body.map-canvas-page .canvas-overlay-panel--top-left {
         top: 56px;
         left: 8px;
+    }
+
+    body.map-canvas-page .canvas-overlay-panel--top-right {
+        top: 56px;
+        right: 8px;
     }
 
     body.map-canvas-page .canvas-overlay-panel--top-center {

@@ -15,6 +15,9 @@ const variantTools = document.getElementById("variant-tools");
 const variantHeading = document.getElementById("variant-heading");
 const variantPicker = document.getElementById("variant-picker");
 const modeButtons = Array.from(document.querySelectorAll("[data-map-mode]"));
+const saveButton = document.getElementById("admin-map-save");
+const saveStatus = document.getElementById("admin-map-save-status");
+const MAP_API_URL = "/api/admin/cartes/terres_neutres";
 
 if (canvas instanceof HTMLCanvasElement) {
     if (
@@ -23,6 +26,8 @@ if (canvas instanceof HTMLCanvasElement) {
         || !(variantTools instanceof HTMLElement)
         || !(variantHeading instanceof HTMLElement)
         || !(variantPicker instanceof HTMLElement)
+        || !(saveButton instanceof HTMLButtonElement)
+        || !(saveStatus instanceof HTMLElement)
         || modeButtons.length !== 2
     ) {
         throw new Error("The map editor controls are missing from the page.");
@@ -43,10 +48,37 @@ if (canvas instanceof HTMLCanvasElement) {
             )
         ])
     );
+    let grid;
+    let mapReady = false;
+    let saveInProgress = false;
+    let changeVersion = 0;
+    let savedVersion = null;
     let currentMode = "selection";
     let selectedTerrainCode = null;
     let selectedVariant = null;
     let leftShiftPressed = false;
+
+    function setSaveStatus(message, state) {
+        saveStatus.textContent = message;
+        saveStatus.dataset.state = state;
+    }
+
+    function updateSaveButton() {
+        saveButton.disabled = (
+            !mapReady
+            || saveInProgress
+            || changeVersion === savedVersion
+        );
+    }
+
+    function setEditorControlsEnabled(enabled) {
+        for (const button of modeButtons) {
+            button.disabled = !enabled;
+        }
+        for (const button of terrainPicker.querySelectorAll("button")) {
+            button.disabled = !enabled;
+        }
+    }
 
     function getCellKey(cell) {
         return `${cell.x};${cell.y}`;
@@ -71,7 +103,12 @@ if (canvas instanceof HTMLCanvasElement) {
     }
 
     function paintCell(cell, event, grid) {
-        if (!cell || !selectedTerrainCode || selectedVariant === null) {
+        if (
+            !mapReady
+            || !cell
+            || !selectedTerrainCode
+            || selectedVariant === null
+        ) {
             return;
         }
 
@@ -86,6 +123,14 @@ if (canvas instanceof HTMLCanvasElement) {
                 terrainCode: selectedTerrainCode,
                 variant: selectedVariant
             });
+            changeVersion += 1;
+            updateSaveButton();
+            setSaveStatus(
+                saveInProgress
+                    ? "Modifications apportées pendant la sauvegarde."
+                    : "Modifications non enregistrées.",
+                saveInProgress ? "pending" : ""
+            );
         }
 
         const wasSelected = (
@@ -164,6 +209,7 @@ if (canvas instanceof HTMLCanvasElement) {
         const button = document.createElement("button");
         button.type = "button";
         button.className = "terrain-choice";
+        button.disabled = true;
         button.dataset.terrainCode = terrain.code;
         button.setAttribute("aria-pressed", "false");
 
@@ -193,6 +239,7 @@ if (canvas instanceof HTMLCanvasElement) {
         });
     }
     setMode("selection");
+    setEditorControlsEnabled(false);
 
     window.addEventListener("keydown", (event) => {
         if (event.code === "ShiftLeft") {
@@ -208,58 +255,213 @@ if (canvas instanceof HTMLCanvasElement) {
         leftShiftPressed = false;
     });
 
-    const grid = createHexGrid(canvas, {
-        columns: 100,
-        rows: 100,
-        hexRadius: 42,
-        minZoom: 0.1,
-        maxZoom: 3,
-        recenterStartZoom: 0.6,
-        coordinateZoomThreshold: 0.75,
-        interactionBlockers: overlays ? [overlays] : [],
-        showCoordinates: coordinatesToggle?.checked ?? false,
-        interactionMode: {
-            getPointerBehavior() {
-                return currentMode === "edition" && leftShiftPressed
-                    ? "custom"
-                    : "pan";
-            },
-            onCellClick(cell, event, api) {
-                if (currentMode === "edition" && selectedTerrainCode) {
+    function createMapGrid(columns, rows) {
+        return createHexGrid(canvas, {
+            columns,
+            rows,
+            hexRadius: 42,
+            minZoom: 0.1,
+            maxZoom: 3,
+            recenterStartZoom: 0.6,
+            coordinateZoomThreshold: 0.75,
+            interactionBlockers: overlays ? [overlays] : [],
+            showCoordinates: coordinatesToggle?.checked ?? false,
+            interactionMode: {
+                getPointerBehavior() {
+                    return currentMode === "edition" && leftShiftPressed
+                        ? "custom"
+                        : "pan";
+                },
+                onCellClick(cell, event, api) {
+                    if (currentMode === "edition" && selectedTerrainCode) {
+                        paintCell(cell, event, api);
+                    } else {
+                        api.setSelectedCell(cell, event);
+                    }
+                },
+                onPointerDown(cell, event, api) {
                     paintCell(cell, event, api);
-                } else {
-                    api.setSelectedCell(cell, event);
+                },
+                onPointerMove(cell, event, api) {
+                    paintCell(cell, event, api);
+                },
+                onPointerUp(cell, event, api) {
+                    if (leftShiftPressed) {
+                        paintCell(cell, event, api);
+                    }
                 }
             },
-            onPointerDown(cell, event, api) {
-                paintCell(cell, event, api);
-            },
-            onPointerMove(cell, event, api) {
-                paintCell(cell, event, api);
-            },
-            onPointerUp(cell, event, api) {
-                if (leftShiftPressed) {
-                    paintCell(cell, event, api);
+            onCellRender(context, cell) {
+                const paint = paintedCells.get(getCellKey(cell));
+                if (!paint) {
+                    return;
                 }
+
+                context.fillStyle = variantColors.get(paint.terrainCode).get(
+                    paint.variant
+                );
+                context.fill();
+            },
+            onSelectionChange(cell) {
+                updateSelectedCellPanel(cell, getCellDetails(cell));
             }
-        },
-        onCellRender(context, cell) {
-            const paint = paintedCells.get(getCellKey(cell));
-            if (!paint) {
-                return;
+        });
+    }
+
+    coordinatesToggle?.addEventListener("change", () => {
+        grid?.setCoordinatesVisible(coordinatesToggle.checked);
+    });
+
+    function decodeMapData(data) {
+        if (
+            !data
+            || data.code !== "terres_neutres"
+            || !Number.isInteger(data.largeur)
+            || data.largeur < 1
+            || !Number.isInteger(data.hauteur)
+            || data.hauteur < 1
+            || !Array.isArray(data.cases)
+        ) {
+            throw new Error("Les informations reçues pour la carte sont invalides.");
+        }
+
+        const cells = new Map();
+        for (const cell of data.cases) {
+            if (
+                !cell
+                || !Number.isInteger(cell.x)
+                || !Number.isInteger(cell.y)
+                || cell.x < 0
+                || cell.x >= data.largeur
+                || cell.y < 0
+                || cell.y >= data.hauteur
+            ) {
+                throw new Error("La carte contient des coordonnées invalides.");
             }
 
-            context.fillStyle = variantColors.get(paint.terrainCode).get(
-                paint.variant
+            const colors = variantColors.get(cell.terrain_code);
+            if (!colors?.has(cell.variant)) {
+                throw new Error(
+                    "La carte contient un terrain ou une variante inconnue."
+                );
+            }
+
+            const key = getCellKey(cell);
+            if (cells.has(key)) {
+                throw new Error("La carte contient des coordonnées dupliquées.");
+            }
+            cells.set(key, {
+                terrainCode: cell.terrain_code,
+                variant: cell.variant
+            });
+        }
+        return cells;
+    }
+
+    async function loadMap() {
+        try {
+            const response = await fetch(MAP_API_URL, {
+                credentials: "same-origin",
+                headers: { Accept: "application/json" }
+            });
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ${response.status}.`);
+            }
+
+            const mapData = await response.json();
+            const loadedCells = decodeMapData(mapData);
+            paintedCells.clear();
+            for (const [key, paint] of loadedCells) {
+                paintedCells.set(key, paint);
+            }
+
+            grid = createMapGrid(mapData.largeur, mapData.hauteur);
+            canvas.setAttribute(
+                "aria-label",
+                `Carte ${mapData.nom}, quadrillage hexagonal de `
+                + `${mapData.largeur} colonnes et ${mapData.hauteur} lignes`
             );
-            context.fill();
-        },
-        onSelectionChange(cell) {
-            updateSelectedCellPanel(cell, getCellDetails(cell));
+            mapReady = true;
+            savedVersion = changeVersion;
+            setEditorControlsEnabled(true);
+            updateSaveButton();
+            setSaveStatus(
+                "Carte chargée. Aucune modification à enregistrer.",
+                "success"
+            );
+        } catch (error) {
+            setEditorControlsEnabled(false);
+            updateSaveButton();
+            const detail = error instanceof Error
+                ? error.message
+                : "Erreur inconnue.";
+            setSaveStatus(
+                `Échec du chargement : ${detail} L'éditeur reste désactivé.`,
+                "error"
+            );
+        }
+    }
+
+    saveButton.addEventListener("click", async () => {
+        if (
+            !mapReady
+            || saveInProgress
+            || changeVersion === savedVersion
+        ) {
+            return;
+        }
+
+        const saveVersion = changeVersion;
+        const cases = Array.from(paintedCells, ([key, paint]) => {
+            const [x, y] = key.split(";").map(Number);
+            return {
+                x,
+                y,
+                terrain_code: paint.terrainCode,
+                variant: paint.variant
+            };
+        });
+
+        saveInProgress = true;
+        saveButton.textContent = "Enregistrement…";
+        updateSaveButton();
+        setSaveStatus("Enregistrement en cours…", "pending");
+
+        try {
+            const response = await fetch(MAP_API_URL, {
+                method: "PUT",
+                credentials: "same-origin",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cases)
+            });
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP ${response.status}.`);
+            }
+
+            savedVersion = saveVersion;
+            setSaveStatus(
+                changeVersion === saveVersion
+                    ? "Carte enregistrée."
+                    : "Sauvegarde terminée; des modifications restent à enregistrer.",
+                changeVersion === saveVersion ? "success" : "pending"
+            );
+        } catch (error) {
+            const detail = error instanceof Error
+                ? error.message
+                : "Erreur inconnue.";
+            setSaveStatus(
+                `Échec de l'enregistrement : ${detail}`,
+                "error"
+            );
+        } finally {
+            saveInProgress = false;
+            saveButton.textContent = "Enregistrer";
+            updateSaveButton();
         }
     });
 
-    coordinatesToggle?.addEventListener("change", () => {
-        grid.setCoordinatesVisible(coordinatesToggle.checked);
-    });
+    loadMap();
 }
