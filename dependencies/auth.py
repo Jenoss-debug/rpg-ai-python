@@ -16,6 +16,13 @@ def a_personnage_avec_grade(utilisateur: Utilisateur, db: Session) -> bool:
     return personnage_id is not None
 
 
+def peut_preparer_itineraires(utilisateur: Utilisateur, db: Session) -> bool:
+    return utilisateur.role == "admin" or (
+        utilisateur.role == "coursier"
+        and a_personnage_avec_grade(utilisateur, db)
+    )
+
+
 def obtenir_utilisateur_connecte(
     request: Request,
     db: Session = Depends(get_db)
@@ -84,13 +91,7 @@ def exiger_acces_preparation_itineraires(
 ):
     """Autorise les administrateurs et les coursiers ayant un personnage."""
 
-    if utilisateur.role == "admin":
-        return utilisateur
-
-    if (
-        utilisateur.role == "coursier"
-        and a_personnage_avec_grade(utilisateur, db)
-    ):
+    if peut_preparer_itineraires(utilisateur, db):
         return utilisateur
 
     raise HTTPException(

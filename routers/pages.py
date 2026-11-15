@@ -6,11 +6,11 @@ from sqlalchemy.orm import Session
 from database.connexion import get_db
 from database.models import Livraison, Utilisateur
 from dependencies.auth import (
-    a_personnage_avec_grade,
     exiger_admin,
     exiger_acces_preparation_itineraires,
     exiger_coursier,
-    obtenir_utilisateur_connecte
+    obtenir_utilisateur_connecte,
+    peut_preparer_itineraires
 )
 from routers.templates import templates
 
@@ -37,9 +37,9 @@ def accueil(
         name="index.html",
         context={
             "utilisateur": utilisateur,
-            "peut_preparer_itineraires": (
-                utilisateur.role == "admin"
-                or a_personnage_avec_grade(utilisateur, db)
+            "peut_preparer_itineraires": peut_preparer_itineraires(
+                utilisateur,
+                db
             )
         }
     )
@@ -91,7 +91,7 @@ def tableau_coursier(
             "utilisateur": utilisateur,
             "livraisons": livraisons,
             "libelles_statuts": LIBELLES_STATUTS,
-            "peut_preparer_itineraires": a_personnage_avec_grade(
+            "peut_preparer_itineraires": peut_preparer_itineraires(
                 utilisateur,
                 db
             )
