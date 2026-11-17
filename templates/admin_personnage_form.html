@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% if mode == "creation" %}
+{% set titre = "Ajouter un personnage" %}
+{% set action = "/admin/personnages" %}
+{% else %}
+{% set titre = "Modifier un personnage" %}
+{% set action = "/admin/personnages/" ~ personnage_id ~ "/modifier" %}
+{% endif %}
+
+{% block title %}{{ titre }} - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>{{ titre }}</h1>
+
+    {% if erreur %}
+    <p class="form-error" role="alert">{{ erreur }}</p>
+    {% endif %}
+
+    <form class="admin-form" action="{{ action }}" method="post">
+        <label for="matricule">Matricule</label>
+        <input type="text" id="matricule" name="matricule" maxlength="50" value="{{ matricule }}" required>
+
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" maxlength="100" value="{{ nom }}" required>
+
+        <label for="joueur_id">Joueur propriétaire</label>
+        <select id="joueur_id" name="joueur_id" required>
+            <option value="">Sélectionner un joueur</option>
+            {% for joueur in joueurs %}
+            <option value="{{ joueur.id }}" {% if joueur_id == joueur.id %}selected{% endif %}>
+                {{ joueur.username }}{% if not joueur.is_active %} (désactivé){% endif %}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="grade_id">Grade</label>
+        <select id="grade_id" name="grade_id">
+            <option value="">Prestataire externe (aucun grade)</option>
+            {% for grade in grades %}
+            <option value="{{ grade.id }}" {% if grade_id == grade.id|string %}selected{% endif %}>
+                {{ grade.nom }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <div class="admin-actions">
+            <button type="submit">Enregistrer</button>
+            {% if mode == "creation" %}
+            <a href="/admin/personnages">Annuler</a>
+            {% else %}
+            <a href="/admin/personnages/{{ personnage_id }}">Annuler</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Personnages - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>Gestion des personnages</h1>
+    <p><a class="button-link" href="/admin/personnages/nouveau">Ajouter un personnage</a></p>
+
+    {% if personnages %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Joueur</th>
+                    <th scope="col">Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for personnage in personnages %}
+                <tr>
+                    <td><a href="/admin/personnages/{{ personnage.id }}">{{ personnage.matricule }}</a></td>
+                    <td>{{ personnage.nom }}</td>
+                    <td><a href="/admin/joueurs/{{ personnage.compte.id }}">{{ personnage.compte.username }}</a></td>
+                    <td>{{ personnage.grade.nom if personnage.grade else "Prestataire externe" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">Aucun personnage n’est enregistré.</p>
+    {% endif %}
+</section>
+{% endblock %}

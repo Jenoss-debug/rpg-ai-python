@@ -43,6 +43,7 @@ class Carte(Base):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+    missions: Mapped[list[Mission]] = relationship(back_populates="carte")
 
 
 class CaseCarte(Base):
@@ -252,15 +253,6 @@ class Secteur(Base):
         back_populates="secteur",
         foreign_keys="Mission.secteur_id"
     )
-    missions_depart: Mapped[list[Mission]] = relationship(
-        back_populates="secteur_depart",
-        foreign_keys="Mission.secteur_depart_id"
-    )
-    missions_arrivee: Mapped[list[Mission]] = relationship(
-        back_populates="secteur_arrivee",
-        foreign_keys="Mission.secteur_arrivee_id"
-    )
-
 
 class TypeMission(Base):
     __tablename__ = "types_missions"
@@ -309,9 +301,9 @@ class Personnage(Base):
         ForeignKey("utilisateurs.id", ondelete="RESTRICT"),
         nullable=False
     )
-    grade_id: Mapped[int] = mapped_column(
+    grade_id: Mapped[int | None] = mapped_column(
         ForeignKey("grades.id", ondelete="RESTRICT"),
-        nullable=False
+        nullable=True
     )
     cree_par_utilisateur_id: Mapped[int] = mapped_column(
         ForeignKey("utilisateurs.id", ondelete="RESTRICT"),
@@ -331,7 +323,7 @@ class Personnage(Base):
         back_populates="personnages_crees",
         foreign_keys=[cree_par_utilisateur_id]
     )
-    grade: Mapped[Grade] = relationship(back_populates="personnages")
+    grade: Mapped[Grade | None] = relationship(back_populates="personnages")
     affectations: Mapped[list[Affectation]] = relationship(
         back_populates="personnage",
         foreign_keys="Affectation.personnage_id"
@@ -357,6 +349,7 @@ class Mission(Base):
         Index("ix_missions_type_mission_id", "type_mission_id"),
         Index("ix_missions_secteur_id", "secteur_id"),
         Index("ix_missions_statut", "statut"),
+        Index("ix_missions_carte_id", "carte_id"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -377,14 +370,14 @@ class Mission(Base):
         ForeignKey("secteurs.id", ondelete="RESTRICT"),
         nullable=True
     )
-    secteur_depart_id: Mapped[int | None] = mapped_column(
-        ForeignKey("secteurs.id", ondelete="RESTRICT"),
-        nullable=True
+    carte_id: Mapped[int] = mapped_column(
+        ForeignKey("cartes.id", ondelete="RESTRICT"),
+        nullable=False
     )
-    secteur_arrivee_id: Mapped[int | None] = mapped_column(
-        ForeignKey("secteurs.id", ondelete="RESTRICT"),
-        nullable=True
-    )
+    depart_x: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    depart_y: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    arrivee_x: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    arrivee_y: Mapped[int | None] = mapped_column(Integer, nullable=True)
     recompense_po: Mapped[int | None] = mapped_column(Integer, nullable=True)
     statut: Mapped[str] = mapped_column(
         String(20),
@@ -407,14 +400,7 @@ class Mission(Base):
         back_populates="missions",
         foreign_keys=[secteur_id]
     )
-    secteur_depart: Mapped[Secteur | None] = relationship(
-        back_populates="missions_depart",
-        foreign_keys=[secteur_depart_id]
-    )
-    secteur_arrivee: Mapped[Secteur | None] = relationship(
-        back_populates="missions_arrivee",
-        foreign_keys=[secteur_arrivee_id]
-    )
+    carte: Mapped[Carte] = relationship(back_populates="missions")
     grades_autorises: Mapped[list[Grade]] = relationship(
         secondary=mission_grades,
         back_populates="missions_autorisees"

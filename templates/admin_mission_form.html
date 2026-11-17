@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% if mode == "creation" %}
+{% set titre_page = "Créer une mission" %}
+{% set action = "/admin/missions" %}
+{% else %}
+{% set titre_page = "Modifier une mission" %}
+{% set action = "/admin/missions/" ~ mission_id ~ "/modifier" %}
+{% endif %}
+
+{% block title %}{{ titre_page }} - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>{{ titre_page }}</h1>
+
+    {% if erreur %}
+    <p class="form-error" role="alert">{{ erreur }}</p>
+    {% endif %}
+
+    <form class="admin-form" action="{{ action }}" method="post">
+        <label for="titre">Intitulé</label>
+        <input type="text" id="titre" name="titre" maxlength="150" value="{{ titre }}" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required>{{ description }}</textarea>
+
+        <label for="description_publique">Description publique</label>
+        <textarea id="description_publique" name="description_publique">{{ description_publique }}</textarea>
+
+        <label for="type_mission_id">Type de mission</label>
+        <select id="type_mission_id" name="type_mission_id" required>
+            <option value="">Sélectionner un type</option>
+            {% for type_mission in types_missions %}
+            <option value="{{ type_mission.id }}" {% if type_mission_id == type_mission.id %}selected{% endif %}>
+                {{ type_mission.nom }}{% if not type_mission.actif %} (inactif){% endif %}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="secteur_id">Secteur principal</label>
+        <select id="secteur_id" name="secteur_id">
+            <option value="">Aucun</option>
+            {% for secteur in secteurs %}
+            <option value="{{ secteur.id }}" {% if secteur_id == secteur.id|string %}selected{% endif %}>
+                {{ secteur.nom }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label for="carte_id">Carte</label>
+        <select id="carte_id" name="carte_id" required>
+            {% for carte in cartes %}
+            <option value="{{ carte.id }}" {% if carte_id == carte.id %}selected{% endif %}>
+                {{ carte.nom }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <fieldset class="coordinate-fields">
+            <legend>Coordonnées du départ (facultatives)</legend>
+            <label for="depart_x">X</label>
+            <input type="number" id="depart_x" name="depart_x" min="0" step="1" value="{{ depart_x if depart_x is not none else '' }}">
+            <label for="depart_y">Y</label>
+            <input type="number" id="depart_y" name="depart_y" min="0" step="1" value="{{ depart_y if depart_y is not none else '' }}">
+        </fieldset>
+
+        <fieldset class="coordinate-fields">
+            <legend>Coordonnées de l’arrivée (facultatives)</legend>
+            <label for="arrivee_x">X</label>
+            <input type="number" id="arrivee_x" name="arrivee_x" min="0" step="1" value="{{ arrivee_x if arrivee_x is not none else '' }}">
+            <label for="arrivee_y">Y</label>
+            <input type="number" id="arrivee_y" name="arrivee_y" min="0" step="1" value="{{ arrivee_y if arrivee_y is not none else '' }}">
+        </fieldset>
+
+        <label for="recompense_po">Récompense (PO)</label>
+        <input type="number" id="recompense_po" name="recompense_po" min="0" step="1" value="{{ recompense_po }}">
+
+        <label for="statut">Statut</label>
+        <select id="statut" name="statut" required>
+            {% for code, libelle in libelles_statuts.items() %}
+            <option value="{{ code }}" {% if statut == code %}selected{% endif %}>{{ libelle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="grade_ids">Grades autorisés</label>
+        <select id="grade_ids" name="grade_ids" multiple size="5">
+            {% for grade in grades %}
+            <option value="{{ grade.id }}" {% if grade.id in grade_ids %}selected{% endif %}>{{ grade.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <label>
+            <input type="checkbox" name="publique" value="true" {% if publique %}checked{% endif %}>
+            Mission publique
+        </label>
+
+        <div class="admin-actions">
+            <button type="submit">Enregistrer</button>
+            {% if mode == "creation" %}
+            <a href="/admin/missions">Annuler</a>
+            {% else %}
+            <a href="/admin/missions/{{ mission_id }}">Annuler</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

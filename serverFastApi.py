@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from routers.admin import router as admin_router
+from routers.admin_missions import router as admin_missions_router
 from routers.auth import router as auth_router
 from routers.pages import router as pages_router
 from routers.private import router as private_router
@@ -48,3 +49,4 @@ serveur_rpg.include_router(pages_router)
 serveur_rpg.include_router(auth_router)
 serveur_rpg.include_router(private_router)
 serveur_rpg.include_router(admin_router)
+serveur_rpg.include_router(admin_missions_router)

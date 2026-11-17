@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Missions - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>Gestion des missions</h1>
+    <p><a class="button-link" href="/admin/missions/nouveau">Créer une mission</a></p>
+
+    {% if missions %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Intitulé</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Secteur</th>
+                    <th scope="col">Carte</th>
+                    <th scope="col">Récompense</th>
+                    <th scope="col">Visibilité</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mission in missions %}
+                <tr>
+                    <td><a href="/admin/missions/{{ mission.id }}">{{ mission.titre }}</a></td>
+                    <td>{{ mission.type_mission.nom }}</td>
+                    <td>{{ libelles_statuts.get(mission.statut, mission.statut) }}</td>
+                    <td>{{ mission.secteur.nom if mission.secteur else "—" }}</td>
+                    <td>{{ mission.carte.nom }}</td>
+                    <td>{{ mission.recompense_po if mission.recompense_po is not none else "—" }}</td>
+                    <td>{{ "Publique" if mission.publique else "Privée" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">Aucune mission n’est enregistrée.</p>
+    {% endif %}
+</section>
+{% endblock %}

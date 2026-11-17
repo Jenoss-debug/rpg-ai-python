@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}{{ mission.titre }} - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>{{ mission.titre }}</h1>
+
+    <dl class="player-details">
+        <dt>Identifiant</dt>
+        <dd>{{ mission.id }}</dd>
+        <dt>Type</dt>
+        <dd>{{ mission.type_mission.nom }}</dd>
+        <dt>Statut</dt>
+        <dd>{{ libelle_statut }}</dd>
+        <dt>Visibilité</dt>
+        <dd>{{ "Publique" if mission.publique else "Privée" }}</dd>
+        <dt>Description</dt>
+        <dd>{{ mission.description }}</dd>
+        <dt>Description publique</dt>
+        <dd>{{ mission.description_publique or "—" }}</dd>
+        <dt>Secteur</dt>
+        <dd>{{ mission.secteur.nom if mission.secteur else "—" }}</dd>
+        <dt>Carte</dt>
+        <dd>{{ mission.carte.nom }}</dd>
+        <dt>Départ</dt>
+        <dd>
+            {% if mission.depart_x is not none or mission.depart_y is not none %}
+            X : {{ mission.depart_x if mission.depart_x is not none else "—" }},
+            Y : {{ mission.depart_y if mission.depart_y is not none else "—" }}
+            {% else %}
+            —
+            {% endif %}
+        </dd>
+        <dt>Arrivée</dt>
+        <dd>
+            {% if mission.arrivee_x is not none or mission.arrivee_y is not none %}
+            X : {{ mission.arrivee_x if mission.arrivee_x is not none else "—" }},
+            Y : {{ mission.arrivee_y if mission.arrivee_y is not none else "—" }}
+            {% else %}
+            —
+            {% endif %}
+        </dd>
+        <dt>Récompense (PO)</dt>
+        <dd>{{ mission.recompense_po if mission.recompense_po is not none else "—" }}</dd>
+        <dt>Créée le</dt>
+        <dd>{{ mission.created_at.strftime("%d/%m/%Y %H:%M") }}</dd>
+        <dt>Créée par (ID)</dt>
+        <dd>{{ mission.cree_par_utilisateur_id }}</dd>
+        <dt>Grades autorisés</dt>
+        <dd>
+            {% if grades_autorises %}
+            <ul>
+                {% for grade in grades_autorises %}
+                <li>{{ grade.nom }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            Aucun grade associé.
+            {% endif %}
+        </dd>
+    </dl>
+
+    <div class="admin-actions">
+        <a class="button-link" href="/admin/missions/{{ mission.id }}/modifier">Modifier la mission</a>
+        <a href="/admin/missions">Retour à la liste</a>
+    </div>
+</section>
+{% endblock %}

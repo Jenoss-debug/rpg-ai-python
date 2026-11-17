@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% if mode == "creation" %}
+{% set titre = "Ajouter un joueur" %}
+{% set action = "/admin/joueurs" %}
+{% else %}
+{% set titre = "Modifier un joueur" %}
+{% set action = "/admin/joueurs/" ~ joueur_id ~ "/modifier" %}
+{% endif %}
+
+{% block title %}{{ titre }} - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>{{ titre }}</h1>
+
+    {% if erreur %}
+    <p class="form-error" role="alert">{{ erreur }}</p>
+    {% endif %}
+
+    <form class="admin-form" action="{{ action }}" method="post">
+        <label for="username">Login</label>
+        <input type="text" id="username" name="username" maxlength="50" value="{{ username }}" required autocomplete="off">
+
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" name="email" maxlength="255" value="{{ email }}" required autocomplete="email">
+
+        {% if mode == "creation" %}
+        <p>Le mot de passe initial sera <strong>1234</strong>.</p>
+        {% endif %}
+
+        <div class="admin-actions">
+            <button type="submit">Enregistrer</button>
+            {% if mode == "creation" %}
+            <a href="/admin/joueurs">Annuler</a>
+            {% else %}
+            <a href="/admin/joueurs/{{ joueur_id }}">Annuler</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+{% endblock %}

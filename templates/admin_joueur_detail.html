@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Joueur {{ joueur.username }} - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>Fiche du joueur</h1>
+
+    <dl class="player-details">
+        <dt>Identifiant</dt>
+        <dd>{{ joueur.id }}</dd>
+        <dt>Login</dt>
+        <dd>{{ joueur.username }}</dd>
+        <dt>Adresse e-mail</dt>
+        <dd>{{ joueur.email }}</dd>
+        <dt>Créé le</dt>
+        <dd>{{ joueur.created_at.strftime("%d/%m/%Y %H:%M") }}</dd>
+        <dt>Statut</dt>
+        <dd>
+            {% if joueur.is_active %}
+            <span class="player-status player-status--active">Actif</span>
+            {% else %}
+            <span class="player-status player-status--inactive">Désactivé</span>
+            {% endif %}
+        </dd>
+    </dl>
+
+    <div class="admin-actions">
+        <a class="button-link" href="/admin/joueurs/{{ joueur.id }}/modifier">Modifier les informations</a>
+        <a class="button-link" href="/admin/personnages/nouveau?joueur_id={{ joueur.id }}">Ajouter un personnage</a>
+        {% if joueur.is_active %}
+        <form action="/admin/joueurs/{{ joueur.id }}/desactiver" method="post">
+            <button type="submit">Désactiver le joueur</button>
+        </form>
+        {% else %}
+        <form action="/admin/joueurs/{{ joueur.id }}/reactiver" method="post">
+            <button type="submit">Réactiver le joueur</button>
+        </form>
+        {% endif %}
+        <a href="/admin/joueurs">Retour à la liste</a>
+    </div>
+
+    <h2>Personnages de {{ joueur.username }}</h2>
+    {% if personnages %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for personnage in personnages %}
+                <tr>
+                    <td><a href="/admin/personnages/{{ personnage.id }}">{{ personnage.matricule }}</a></td>
+                    <td>{{ personnage.nom }}</td>
+                    <td>{{ personnage.grade.nom if personnage.grade else "Prestataire externe" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">Ce joueur ne possède pas encore de personnage.</p>
+    {% endif %}
+</section>
+{% endblock %}

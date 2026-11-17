@@ -15,6 +15,9 @@
             <a href="/">Accueil</a>
             {% if utilisateur.role == "admin" %}
             <a href="/admin">Administration</a>
+            <a href="/admin/joueurs">Gestion des joueurs</a>
+            <a href="/admin/personnages">Personnages</a>
+            <a href="/admin/missions">Missions</a>
             <a href="/admin/cartes">Gestion des cartes</a>
             {% elif utilisateur.role == "coursier" %}
             <a href="/coursier">Mon espace coursier</a>

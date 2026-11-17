@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Joueurs - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>Gestion des joueurs</h1>
+    <p>Les comptes actifs et désactivés sont affichés, les comptes actifs en premier.</p>
+    <p><a class="button-link" href="/admin/joueurs/nouveau">Ajouter un joueur</a></p>
+
+    {% if joueurs %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Login</th>
+                    <th scope="col">Adresse e-mail</th>
+                    <th scope="col">Personnages</th>
+                    <th scope="col">Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for joueur in joueurs %}
+                <tr>
+                    <td><a href="/admin/joueurs/{{ joueur.id }}">{{ joueur.username }}</a></td>
+                    <td>{{ joueur.email }}</td>
+                    <td>{{ nombre_personnages_par_joueur.get(joueur.id, 0) }}</td>
+                    <td>
+                        {% if joueur.is_active %}
+                        <span class="player-status player-status--active">Actif</span>
+                        {% else %}
+                        <span class="player-status player-status--inactive">Désactivé</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">Aucun joueur n’est enregistré.</p>
+    {% endif %}
+</section>
+{% endblock %}

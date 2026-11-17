@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Personnage {{ personnage.matricule }} - Administration - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>Fiche du personnage</h1>
+
+    <dl class="player-details">
+        <dt>Identifiant</dt>
+        <dd>{{ personnage.id }}</dd>
+        <dt>Matricule</dt>
+        <dd>{{ personnage.matricule }}</dd>
+        <dt>Nom</dt>
+        <dd>{{ personnage.nom }}</dd>
+        <dt>Joueur propriétaire</dt>
+        <dd><a href="/admin/joueurs/{{ personnage.compte.id }}">{{ personnage.compte.username }}</a></dd>
+        <dt>Grade</dt>
+        <dd>{{ libelle_grade }}</dd>
+        <dt>Créé le</dt>
+        <dd>{{ personnage.created_at.strftime("%d/%m/%Y %H:%M") }}</dd>
+        <dt>Créé par</dt>
+        <dd>{{ personnage.createur.username }}</dd>
+    </dl>
+
+    <div class="admin-actions">
+        <a class="button-link" href="/admin/personnages/{{ personnage.id }}/modifier">Modifier le personnage</a>
+        <a href="/admin/personnages">Retour à la liste</a>
+    </div>
+</section>
+{% endblock %}
