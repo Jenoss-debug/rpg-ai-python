@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from database.connexion import get_db
-from database.models import Livraison, Utilisateur
+from database.models import Livraison, Mission, Utilisateur
 from dependencies.auth import (
     exiger_admin,
     exiger_acces_preparation_itineraires,
@@ -24,28 +24,64 @@ LIBELLES_STATUTS = {
 }
 
 
+def _charger_missions_publiques_ouvertes(
+    db: Session,
+    limite: int | None = None
+) -> list[dict[str, str | None]]:
+    requete = (
+        select(Mission.titre, Mission.description_publique)
+        .where(
+            Mission.publique.is_(True),
+            Mission.statut == "ouverte"
+        )
+        .order_by(Mission.created_at.desc(), Mission.id.desc())
+    )
+    if limite is not None:
+        requete = requete.limit(limite)
+    lignes = db.execute(requete).mappings()
+    return [
+        {
+            "titre": ligne["titre"],
+            "description_publique": ligne["description_publique"]
+        }
+        for ligne in lignes
+    ]
+
+
 @router.get("/")
 def accueil(
     request: Request,
     utilisateur: Utilisateur = Depends(obtenir_utilisateur_connecte),
     db: Session = Depends(get_db)
 ):
-    if utilisateur is None:
+    if utilisateur is not None:
+        if utilisateur.role == "admin":
+            return RedirectResponse(url="/admin", status_code=303)
+        if utilisateur.role == "coursier":
+            return RedirectResponse(url="/coursier", status_code=303)
         return RedirectResponse(url="/login", status_code=303)
 
     return templates.TemplateResponse(
         request=request,
-        name="index.html",
+        name="public_home.html",
         context={
-            "utilisateur": utilisateur,
-            "peut_preparer_itineraires": peut_preparer_itineraires(
-                utilisateur,
-                db
-            ),
-            "peut_gerer_affectations": peut_gerer_affectations(
-                utilisateur,
-                db
-            )
+            "utilisateur": None,
+            "missions": _charger_missions_publiques_ouvertes(db, limite=3)
+        }
+    )
+
+
+@router.get("/annonces")
+def annonces_publiques(
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    return templates.TemplateResponse(
+        request=request,
+        name="public_announcements.html",
+        context={
+            "utilisateur": None,
+            "missions": _charger_missions_publiques_ouvertes(db)
         }
     )
 

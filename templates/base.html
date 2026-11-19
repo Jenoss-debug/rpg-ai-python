@@ -5,13 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Médiéval Relais{% endblock %}</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css?v=20261119-home-dialogs">
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
-    <header>
+    <header class="site-header">
         <a class="brand" href="/">Médiéval Relais</a>
-        <nav aria-label="Navigation principale">
+        {% if utilisateur is defined and utilisateur %}
+        <input class="nav-toggle" type="checkbox" id="nav-toggle" aria-controls="primary-navigation">
+        <label class="nav-toggle-label" for="nav-toggle">
+            <span class="nav-toggle-icon" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </span>
+            <span>Menu</span>
+        </label>
+        <nav class="site-nav" id="primary-navigation" aria-label="Navigation principale">
             <a href="/">Accueil</a>
             {% if utilisateur.role == "admin" %}
             <a href="/admin">Administration</a>
@@ -28,10 +36,27 @@
             {% if peut_preparer_itineraires %}
             <a href="/preparation-itineraires">Préparer un itinéraire</a>
             {% endif %}
-            <form action="/logout" method="post">
+            <form class="nav-logout" action="/logout" method="post">
                 <button class="logout-button" type="submit">Se déconnecter</button>
             </form>
         </nav>
+        {% else %}
+        <div class="public-header">
+            <div class="public-header-signature">
+                <span>La faction marchande d’Angémoniaque</span>
+                <a class="public-game-link" href="https://www.angemoniaque.com" target="_blank"
+                    rel="noopener noreferrer" aria-label="Visiter le site d’Angémoniaque (nouvel onglet)">
+                    <img src="https://www.angemoniaque.com/assets/images/k/logo-3q6qe5we7gh4rkm.png"
+                        alt="Angémoniaque" width="130" height="45" decoding="async"
+                        referrerpolicy="no-referrer">
+                </a>
+            </div>
+            <nav class="public-header-nav" aria-label="Navigation publique">
+                <a href="/annonces">Annonces ouvertes</a>
+                <a class="button-link public-login-link" href="/login">Connexion</a>
+            </nav>
+        </div>
+        {% endif %}
     </header>
 
     <main class="{% block main_class %}{% endblock %}">

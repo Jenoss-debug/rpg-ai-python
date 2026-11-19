@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Annonces ouvertes — Médiéval Relais{% endblock %}
+
+{% block body_class %}public-listing-page{% endblock %}
+
+{% block content %}
+<section class="public-announcements" aria-labelledby="announcements-title">
+    <p class="eyebrow">Le tableau de la guilde</p>
+    <h1 id="announcements-title">Annonces ouvertes</h1>
+    <p>Les missions marquées publiques et ouvertes à de nouveaux coursiers.</p>
+
+    {% if missions %}
+    <div class="public-announcement-list">
+        {% for mission in missions %}
+        <article class="public-announcement-card">
+            <span class="status-badge status-badge--open">Ouverte</span>
+            <h2>{{ mission["titre"] }}</h2>
+            {% if mission["description_publique"] %}
+            <p>{{ mission["description_publique"] }}</p>
+            {% else %}
+            <p class="public-mission-undisclosed">Description non communiquée.</p>
+            {% endif %}
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="public-empty-state">Aucune annonce publique n’est ouverte pour le moment.</p>
+    {% endif %}
+
+    <a class="button-link" href="/">Retour à l’accueil</a>
+</section>
+{% endblock %}

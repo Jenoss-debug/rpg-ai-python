@@ -1,34 +1,28 @@
-<!DOCTYPE html>
-<html lang="fr">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Médiéval Relais</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+{% block title %}Connexion - Médiéval Relais{% endblock %}
 
-<body>
+{% block body_class %}auth-page{% endblock %}
 
-    <main class="login-container">
-        <h1>Médiéval Relais</h1>
-        <h2>Connexion</h2>
+{% block main_class %}login-main{% endblock %}
 
-        {% if erreur %}
-        <p class="erreur">{{ erreur }}</p>
-        {% endif %}
+{% block content %}
+<section class="login-container" aria-labelledby="login-title">
+    <p class="eyebrow">Médiéval Relais</p>
+    <h1 id="login-title">Connexion</h1>
 
-        <form action="/login" method="post">
-            <label for="identifiant">Identifiant ou e-mail</label>
-            <input type="text" id="identifiant" name="identifiant" required autocomplete="username">
+    {% if erreur %}
+    <p class="erreur" role="alert">{{ erreur }}</p>
+    {% endif %}
 
-            <label for="mot_de_passe">Mot de passe</label>
-            <input type="password" id="mot_de_passe" name="mot_de_passe" required autocomplete="current-password">
+    <form action="/login" method="post">
+        <label for="identifiant">Identifiant ou e-mail</label>
+        <input type="text" id="identifiant" name="identifiant" required autocomplete="username">
 
-            <button type="submit">Se connecter</button>
-        </form>
-    </main>
+        <label for="mot_de_passe">Mot de passe</label>
+        <input type="password" id="mot_de_passe" name="mot_de_passe" required autocomplete="current-password">
 
-</body>
-
-</html>
+        <button type="submit">Se connecter</button>
+    </form>
+</section>
+{% endblock %}

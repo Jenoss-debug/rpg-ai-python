@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Médiéval Relais — La guilde des messagers{% endblock %}
+
+{% block body_class %}public-home{% endblock %}
+
+{% block content %}
+<div class="public-home-content">
+    <section class="public-scene" aria-label="La guilde de Médiéval Relais">
+        <div class="public-scene-art" role="img"
+            aria-label="Bâtisse de la guilde d’Angémoniaque, ses voyageurs et son panneau d’annonces"></div>
+
+        <div class="public-scene-intro">
+            <p class="eyebrow">Médiéval Relais</p>
+            <h1>Les routes du royaume ont leurs messagers.</h1>
+            <p>La faction veille sur les plis, les colis et les missions qui font vivre le royaume.</p>
+        </div>
+
+        <section class="public-mission-board" aria-labelledby="public-board-title">
+            <div class="public-board-heading">
+                <span class="board-seal" aria-hidden="true">MR</span>
+                <div>
+                    <p class="eyebrow">Au tableau de la guilde</p>
+                    <h2 id="public-board-title">Annonces ouvertes</h2>
+                </div>
+            </div>
+
+            {% if missions %}
+            <ol class="public-mission-list">
+                {% for mission in missions %}
+                <li class="public-mission">
+                    <h3>{{ mission["titre"] }}</h3>
+                    {% if mission["description_publique"] %}
+                    <p>{{ mission["description_publique"] }}</p>
+                    {% else %}
+                    <p class="public-mission-undisclosed">Description non communiquée.</p>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ol>
+            {% else %}
+            <p class="public-empty-state">Le tableau est calme pour l’instant. Revenez bientôt consulter les annonces.
+            </p>
+            {% endif %}
+
+            <div class="public-board-actions">
+                <a class="public-board-link" href="/annonces">Voir toutes les annonces</a>
+                <button class="public-board-link public-board-publish" type="button"
+                    data-dialog-target="announcement-dialog" aria-haspopup="dialog"
+                    aria-controls="announcement-dialog">Publiez votre annonce</button>
+            </div>
+        </section>
+
+        <nav class="public-scene-actions" aria-label="Découvrir la guilde">
+            <a class="scene-door-link scene-door-link--discover" href="#guilde">Découvrir la Guilde</a>
+            <button class="scene-door-link scene-door-link--courier" type="button"
+                data-dialog-target="courier-dialog" aria-haspopup="dialog"
+                aria-controls="courier-dialog">Trouver un coursier</button>
+            <a class="scene-door-link scene-door-link--join" href="/login">Entrer dans la Guilde</a>
+        </nav>
+    </section>
+
+    <section class="guild-introduction" id="guilde" aria-labelledby="guild-introduction-title">
+        <p class="eyebrow">Un relais, des routes, des rencontres</p>
+        <h2 id="guild-introduction-title">La Guilde fait avancer les histoires.</h2>
+        <p class="guild-introduction-lead">
+            Médiéval Relais organise les missions et accompagne celles et ceux qui les accomplissent,
+            à travers l’univers d’Angémoniaque.
+        </p>
+        <div class="guild-features">
+            <article class="guild-feature">
+                <h3>Des missions suivies</h3>
+                <p>Les annonces et leur progression sont réunies au même relais.</p>
+            </article>
+            <article class="guild-feature">
+                <h3>Des personnages, une équipe</h3>
+                <p>La guilde organise les personnages et les coursiers qui prennent la route.</p>
+            </article>
+            <article class="guild-feature">
+                <h3>Des nouvelles en chemin</h3>
+                <p>Messages et colis voyagent de relais en relais, au fil des routes du royaume.</p>
+            </article>
+        </div>
+        <a class="button-link guild-join-link" href="/login">Rejoindre la guilde</a>
+    </section>
+</div>
+
+<dialog class="request-dialog request-dialog--courier" id="courier-dialog" role="dialog"
+    aria-labelledby="courier-dialog-title" aria-modal="true">
+    <div class="request-dialog__content">
+        <header class="request-dialog__header">
+            <span class="request-dialog__emblem" aria-hidden="true">✉</span>
+            <div>
+                <p class="eyebrow">Un pli à faire voyager ?</p>
+                <h2 id="courier-dialog-title">Besoin de faire transporter quelque chose ?</h2>
+            </div>
+            <button class="request-dialog__close" type="button" data-dialog-close
+                aria-label="Fermer cette fenêtre">&times;</button>
+        </header>
+        <div class="request-dialog__body">
+            <p>
+                Médiéval Relais met son réseau de coursiers à votre service pour acheminer vos plis et colis
+                à travers le royaume.
+            </p>
+            <p>
+                Pour nous soumettre une demande de livraison, contactez directement notre représentant en jeu.
+                Voici les informations qui nous permettront d'étudier votre demande.
+            </p>
+            <h3>Informations à préparer</h3>
+            <ul class="request-dialog__list">
+                <li><strong>Moyen de contact :</strong> votre messagerie Angémoniaque.</li>
+                <li><strong>Lieu de départ et destination :</strong> coordonnées précises X ; Y.</li>
+                <li><strong>Personnages concernés :</strong> nom du ou des personnages expéditeurs et destinataires.</li>
+                <li><strong>Nature du transport :</strong> type de pli ou de colis.</li>
+                <li><strong>Description :</strong> contenu, particularités et éventuelles contraintes de livraison.</li>
+            </ul>
+            <p>
+                Notre représentant vous renseignera sur les possibilités de prise en charge de votre demande.
+            </p>
+            <aside class="request-contact" aria-label="Contacter le représentant de la guilde">
+                <div class="request-contact__identity">
+                    <span class="request-contact__seal" aria-hidden="true">Ba</span>
+                    <div>
+                        <h3>Ba</h3>
+                        <p>Prince des lettres de Médiéval Relais</p>
+                        <p>Matricule : 121</p>
+                    </div>
+                </div>
+                <a class="button-link request-contact__button"
+                    href="https://www.angemoniaque.com/event?personnage=121"
+                    target="_blank" rel="noopener noreferrer">Contacter Ba en jeu</a>
+            </aside>
+        </div>
+    </div>
+</dialog>
+
+<dialog class="request-dialog request-dialog--announcement" id="announcement-dialog" role="dialog"
+    aria-labelledby="announcement-dialog-title" aria-modal="true">
+    <div class="request-dialog__content">
+        <header class="request-dialog__header">
+            <span class="request-dialog__emblem" aria-hidden="true">✦</span>
+            <div>
+                <p class="eyebrow">Au tableau de la communauté</p>
+                <h2 id="announcement-dialog-title">Faites passer le message !</h2>
+            </div>
+            <button class="request-dialog__close" type="button" data-dialog-close
+                aria-label="Fermer cette fenêtre">&times;</button>
+        </header>
+        <div class="request-dialog__body">
+            <p>
+                Vous souhaitez faire connaître une mission, proposer un objet à la vente ou transmettre une
+                information à la communauté ?
+            </p>
+            <p>
+                Médiéval Relais vous propose de relayer vos annonces auprès des habitants du royaume.
+            </p>
+            <p>
+                Contactez directement notre représentant en jeu pour lui présenter votre proposition.
+            </p>
+            <h3>Exemples de publications</h3>
+            <ul class="request-dialog__list">
+                <li>Proposition d'une nouvelle mission publique.</li>
+                <li>Mise en vente ou recherche d'un objet.</li>
+                <li>Message à transmettre.</li>
+                <li>Toute autre annonce destinée à la communauté.</li>
+            </ul>
+            <p>
+                Décrivez simplement votre proposition à notre représentant. Il vous indiquera les possibilités
+                de publication.
+            </p>
+            <aside class="request-contact" aria-label="Contacter le représentant de la guilde">
+                <div class="request-contact__identity">
+                    <span class="request-contact__seal" aria-hidden="true">Ba</span>
+                    <div>
+                        <h3>Ba</h3>
+                        <p>Prince des lettres de Médiéval Relais</p>
+                        <p>Matricule : 121</p>
+                    </div>
+                </div>
+                <a class="button-link request-contact__button"
+                    href="https://www.angemoniaque.com/event?personnage=121"
+                    target="_blank" rel="noopener noreferrer">Contacter Ba en jeu</a>
+            </aside>
+        </div>
+    </div>
+</dialog>
+
+<script>
+    (() => {
+        const openers = document.querySelectorAll("[data-dialog-target]");
+        let returnFocusTo = null;
+        let previousBodyOverflow = "";
+        let previousRootOverflow = "";
+
+        openers.forEach((opener) => {
+            const dialog = document.getElementById(opener.dataset.dialogTarget);
+            const closeButton = dialog.querySelector("[data-dialog-close]");
+
+            opener.addEventListener("click", () => {
+                returnFocusTo = opener;
+                previousBodyOverflow = document.body.style.overflow;
+                previousRootOverflow = document.documentElement.style.overflow;
+                document.body.style.overflow = "hidden";
+                document.documentElement.style.overflow = "hidden";
+                dialog.showModal();
+                closeButton.focus();
+            });
+
+            closeButton.addEventListener("click", () => dialog.close());
+            dialog.addEventListener("cancel", (event) => {
+                event.preventDefault();
+                dialog.close();
+            });
+            dialog.addEventListener("click", (event) => {
+                if (event.target !== dialog) {
+                    return;
+                }
+                const bounds = dialog.getBoundingClientRect();
+                const outside = event.clientX < bounds.left || event.clientX > bounds.right
+                    || event.clientY < bounds.top || event.clientY > bounds.bottom;
+                if (outside) {
+                    dialog.close();
+                }
+            });
+            dialog.addEventListener("close", () => {
+                document.body.style.overflow = previousBodyOverflow;
+                document.documentElement.style.overflow = previousRootOverflow;
+                if (returnFocusTo) {
+                    returnFocusTo.focus();
+                    returnFocusTo = null;
+                }
+            });
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                const openDialog = document.querySelector("dialog[open]");
+                if (openDialog) {
+                    openDialog.close();
+                }
+            }
+        });
+    })();
+</script>
+{% endblock %}
