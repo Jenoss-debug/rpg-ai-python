@@ -205,6 +205,31 @@ button {
     margin: 0;
 }
 
+.assignment-status-form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.assignment-status-form select {
+    padding: 8px;
+    border: 1px solid #596475;
+    border-radius: 5px;
+    background-color: #252c3a;
+    color: #eeeeee;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
 .form-error {
     color: #ff9a9a;
 }

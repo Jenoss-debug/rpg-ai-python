@@ -9,6 +9,7 @@ from dependencies.auth import (
     exiger_admin,
     exiger_acces_preparation_itineraires,
     exiger_coursier,
+    peut_gerer_affectations,
     obtenir_utilisateur_connecte,
     peut_preparer_itineraires
 )
@@ -38,6 +39,10 @@ def accueil(
         context={
             "utilisateur": utilisateur,
             "peut_preparer_itineraires": peut_preparer_itineraires(
+                utilisateur,
+                db
+            ),
+            "peut_gerer_affectations": peut_gerer_affectations(
                 utilisateur,
                 db
             )
@@ -94,6 +99,10 @@ def tableau_coursier(
             "peut_preparer_itineraires": peut_preparer_itineraires(
                 utilisateur,
                 db
+            ),
+            "peut_gerer_affectations": peut_gerer_affectations(
+                utilisateur,
+                db
             )
         }
     )
@@ -102,13 +111,18 @@ def tableau_coursier(
 @router.get("/preparation-itineraires")
 def preparation_itineraires(
     request: Request,
-    utilisateur: Utilisateur = Depends(exiger_acces_preparation_itineraires)
+    utilisateur: Utilisateur = Depends(exiger_acces_preparation_itineraires),
+    db: Session = Depends(get_db)
 ):
     return templates.TemplateResponse(
         request=request,
         name="route_planner.html",
         context={
             "utilisateur": utilisateur,
-            "peut_preparer_itineraires": True
+            "peut_preparer_itineraires": True,
+            "peut_gerer_affectations": peut_gerer_affectations(
+                utilisateur,
+                db
+            )
         }
     )

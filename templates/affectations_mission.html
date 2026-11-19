@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Affectations - {{ mission.titre }} - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>{{ mission.titre }}</h1>
+    <dl class="player-details">
+        <dt>Type</dt>
+        <dd>{{ mission.type_mission.nom }}</dd>
+        <dt>Statut</dt>
+        <dd>{{ mission.statut }}</dd>
+        <dt>Secteur</dt>
+        <dd>{{ mission.secteur.nom if mission.secteur else "—" }}</dd>
+        <dt>Carte</dt>
+        <dd>{{ mission.carte.nom }}</dd>
+        <dt>Grades autorisés</dt>
+        <dd>
+            {% if mission.grades_autorises %}
+            {{ mission.grades_autorises | map(attribute="nom") | join(", ") }}
+            {% else %}
+            Aucun grade autorisé
+            {% endif %}
+        </dd>
+    </dl>
+
+    {% include "_mission_affectations.html" %}
+</section>
+{% endblock %}

@@ -7,6 +7,10 @@ from sqlalchemy.orm import Session, selectinload
 from database.connexion import get_db
 from database.models import Carte, Grade, Mission, Secteur, TypeMission, Utilisateur
 from dependencies.auth import exiger_admin
+from routers.affectations import (
+    STATUTS_AFFECTATION,
+    charger_donnees_affectations
+)
 from routers.templates import templates
 
 
@@ -403,6 +407,10 @@ def fiche_mission(
     db: Session = Depends(get_db)
 ):
     mission = _obtenir_mission(db, mission_id)
+    affectations, personnages_disponibles = charger_donnees_affectations(
+        db,
+        mission
+    )
     return templates.TemplateResponse(
         request=request,
         name="admin_mission_detail.html",
@@ -410,6 +418,10 @@ def fiche_mission(
             "utilisateur": administrateur,
             "peut_preparer_itineraires": True,
             "mission": mission,
+            "affectations": affectations,
+            "personnages_disponibles": personnages_disponibles,
+            "statuts_affectation": STATUTS_AFFECTATION,
+            "peut_gerer_affectations": True,
             "libelle_statut": STATUTS_MISSION[mission.statut],
             "grades_autorises": sorted(
                 mission.grades_autorises,

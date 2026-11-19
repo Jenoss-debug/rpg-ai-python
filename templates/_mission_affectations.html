@@ -1,0 +1,78 @@
+<section class="mission-assignments" aria-labelledby="mission-assignments-title">
+    <h2 id="mission-assignments-title">Personnages affectés</h2>
+
+    {% if erreur %}
+    <p class="form-error" role="alert">{{ erreur }}</p>
+    {% endif %}
+
+    {% if affectations %}
+    <div class="admin-table-container">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th scope="col">Personnage</th>
+                    <th scope="col">Grade</th>
+                    <th scope="col">Joueur propriétaire</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Modifier le statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for affectation in affectations %}
+                <tr>
+                    <td>{{ affectation.personnage.matricule }} — {{ affectation.personnage.nom }}</td>
+                    <td>{{ affectation.personnage.grade.nom if affectation.personnage.grade else "Prestataire externe" }}</td>
+                    <td>
+                        {% if utilisateur.role == "admin" %}
+                        <a href="/admin/joueurs/{{ affectation.personnage.compte.id }}">{{ affectation.personnage.compte.username }}</a>
+                        {% else %}
+                        {{ affectation.personnage.compte.username }}
+                        {% endif %}
+                    </td>
+                    <td>{{ statuts_affectation.get(affectation.statut, affectation.statut) }}</td>
+                    <td>
+                        <form class="assignment-status-form" action="/affectations/{{ affectation.id }}/statut" method="post">
+                            <label class="sr-only" for="affectation-status-{{ affectation.id }}">Statut</label>
+                            <select id="affectation-status-{{ affectation.id }}" name="statut">
+                                {% for code, libelle in statuts_affectation.items() %}
+                                <option value="{{ code }}" {% if affectation.statut == code %}selected{% endif %}>{{ libelle }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit">Enregistrer</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty-state">Aucun personnage n’est affecté à cette mission.</p>
+    {% endif %}
+
+    <h3>Affecter des personnages</h3>
+    {% if personnages_disponibles %}
+    <form class="admin-form" action="/affectations/missions/{{ mission.id }}" method="post">
+        <label for="personnage-ids">Personnages compatibles (sélection multiple)</label>
+        <select id="personnage-ids" name="personnage_ids" multiple size="8" required>
+            {% for personnage in personnages_disponibles %}
+            <option value="{{ personnage.id }}">
+                {{ personnage.matricule }} — {{ personnage.nom }}
+                ({{ personnage.grade.nom }}, joueur : {{ personnage.compte.username }})
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit">Affecter les personnages sélectionnés</button>
+    </form>
+    {% else %}
+    <p class="empty-state">Aucun personnage non affecté ne possède un grade autorisé par cette mission.</p>
+    {% endif %}
+
+    <p class="admin-actions">
+        {% if utilisateur.role == "admin" %}
+        <a href="/admin/missions/{{ mission.id }}">Retour à la fiche administrateur</a>
+        {% else %}
+        <a href="/affectations">Retour à la liste des missions</a>
+        {% endif %}
+    </p>
+</section>

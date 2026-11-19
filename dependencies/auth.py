@@ -23,6 +23,27 @@ def peut_preparer_itineraires(utilisateur: Utilisateur, db: Session) -> bool:
     )
 
 
+def peut_gerer_affectations(
+    utilisateur: Utilisateur,
+    db: Session
+) -> bool:
+    if utilisateur.role == "admin":
+        return True
+    if utilisateur.role != "coursier":
+        return False
+
+    personnage_id = db.scalar(
+        select(Personnage.id)
+        .join(Grade, Personnage.grade_id == Grade.id)
+        .where(
+            Personnage.utilisateur_id == utilisateur.id,
+            Grade.rang.in_((1, 2, 3))
+        )
+        .limit(1)
+    )
+    return personnage_id is not None
+
+
 def obtenir_utilisateur_connecte(
     request: Request,
     db: Session = Depends(get_db)
@@ -97,4 +118,19 @@ def exiger_acces_preparation_itineraires(
     raise HTTPException(
         status_code=403,
         detail="Accès réservé aux administrateurs et aux coursiers ayant un personnage avec un grade."
+    )
+
+
+def exiger_gestion_affectations(
+    utilisateur: Utilisateur = Depends(exiger_connexion),
+    db: Session = Depends(get_db)
+):
+    """Autorise les administrateurs et les coursiers de grades 1 à 3."""
+
+    if peut_gerer_affectations(utilisateur, db):
+        return utilisateur
+
+    raise HTTPException(
+        status_code=403,
+        detail="Accès réservé aux administrateurs et aux coursiers de grade 1, 2 ou 3."
     )

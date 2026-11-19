@@ -21,6 +21,9 @@
             <a href="/admin/cartes">Gestion des cartes</a>
             {% elif utilisateur.role == "coursier" %}
             <a href="/coursier">Mon espace coursier</a>
+            {% if peut_gerer_affectations | default(false) %}
+            <a href="/affectations">Gérer les affectations</a>
+            {% endif %}
             {% endif %}
             {% if peut_preparer_itineraires %}
             <a href="/preparation-itineraires">Préparer un itinéraire</a>

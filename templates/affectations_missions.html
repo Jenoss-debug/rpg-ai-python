@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Gérer les affectations - Médiéval Relais{% endblock %}
+
+{% block content %}
+<section class="admin-page">
+    <h1>Gérer les affectations</h1>
+    <p>Sélectionnez une mission pour consulter et gérer les personnages affectés.</p>
+
+    {% if missions %}
+    <div class="delivery-list">
+        {% for mission in missions %}
+        <article class="delivery-card">
+            <h2><a href="/affectations/missions/{{ mission.id }}">{{ mission.titre }}</a></h2>
+            <p>Type : {{ mission.type_mission.nom }}</p>
+            <p>Statut : {{ statuts_mission.get(mission.statut, mission.statut) }}</p>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Aucune mission n’est enregistrée.</p>
+    {% endif %}
+</section>
+{% endblock %}

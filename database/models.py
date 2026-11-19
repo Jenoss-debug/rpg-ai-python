@@ -415,7 +415,7 @@ class Affectation(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "statut IN ('proposee', 'acceptee', 'en_cours', 'validee', 'refusee', 'annulee')",
+            "statut IN ('en_cours', 'terminee', 'revoquee')",
             name="ck_affectations_statut"
         ),
         CheckConstraint(
@@ -462,8 +462,8 @@ class Affectation(Base):
     statut: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
-        default="proposee",
-        server_default="proposee"
+        default="en_cours",
+        server_default="en_cours"
     )
     validee_par_utilisateur_id: Mapped[int | None] = mapped_column(
         ForeignKey("utilisateurs.id", ondelete="RESTRICT"),
