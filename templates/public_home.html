@@ -12,7 +12,7 @@
 
         <div class="public-scene-intro">
             <p class="eyebrow">Médiéval Relais</p>
-            <h1>Les routes du royaume ont leurs messagers.</h1>
+            <h1>Les routes sont longues, mais nos coursiers sont déjà en selle.</h1>
             <p>La faction veille sur les plis, les colis et les missions qui font vivre le royaume.</p>
         </div>
 
@@ -46,17 +46,24 @@
             <div class="public-board-actions">
                 <a class="public-board-link" href="/annonces">Voir toutes les annonces</a>
                 <button class="public-board-link public-board-publish" type="button"
-                    data-dialog-target="announcement-dialog" aria-haspopup="dialog"
-                    aria-controls="announcement-dialog">Publiez votre annonce</button>
+                    data-dialog-target="announcement-dialog" aria-haspopup="dialog" aria-controls="announcement-dialog">
+                    <img src="/static/images/LogoMR03.png" alt="" aria-hidden="true" width="32" height="32">
+                    Publiez votre annonce
+                </button>
             </div>
         </section>
 
         <nav class="public-scene-actions" aria-label="Découvrir la guilde">
             <a class="scene-door-link scene-door-link--discover" href="#guilde">Découvrir la Guilde</a>
-            <button class="scene-door-link scene-door-link--courier" type="button"
-                data-dialog-target="courier-dialog" aria-haspopup="dialog"
-                aria-controls="courier-dialog">Trouver un coursier</button>
-            <a class="scene-door-link scene-door-link--join" href="/login">Entrer dans la Guilde</a>
+            <button class="scene-door-link scene-door-link--courier" type="button" data-dialog-target="courier-dialog"
+                aria-haspopup="dialog" aria-controls="courier-dialog">
+                <img src="/static/images/LogoMR01.png" alt="" aria-hidden="true" width="36" height="36">
+                Trouver un coursier
+            </button>
+            <a class="scene-door-link scene-door-link--join" href="/login">
+                <img src="/static/images/LogoMR04.png" alt="" aria-hidden="true" width="32" height="36">
+                Entrer dans la Guilde
+            </a>
         </nav>
     </section>
 
@@ -89,7 +96,8 @@
     aria-labelledby="courier-dialog-title" aria-modal="true">
     <div class="request-dialog__content">
         <header class="request-dialog__header">
-            <span class="request-dialog__emblem" aria-hidden="true">✉</span>
+            <img class="request-dialog__emblem" src="/static/images/LogoMR02.png" alt="" aria-hidden="true" width="52"
+                height="52">
             <div>
                 <p class="eyebrow">Un pli à faire voyager ?</p>
                 <h2 id="courier-dialog-title">Besoin de faire transporter quelque chose ?</h2>
@@ -110,7 +118,8 @@
             <ul class="request-dialog__list">
                 <li><strong>Moyen de contact :</strong> votre messagerie Angémoniaque.</li>
                 <li><strong>Lieu de départ et destination :</strong> coordonnées précises X ; Y.</li>
-                <li><strong>Personnages concernés :</strong> nom du ou des personnages expéditeurs et destinataires.</li>
+                <li><strong>Personnages concernés :</strong> nom du ou des personnages expéditeurs et destinataires.
+                </li>
                 <li><strong>Nature du transport :</strong> type de pli ou de colis.</li>
                 <li><strong>Description :</strong> contenu, particularités et éventuelles contraintes de livraison.</li>
             </ul>
@@ -126,8 +135,7 @@
                         <p>Matricule : 121</p>
                     </div>
                 </div>
-                <a class="button-link request-contact__button"
-                    href="https://www.angemoniaque.com/event?personnage=121"
+                <a class="button-link request-contact__button" href="https://www.angemoniaque.com/event?personnage=121"
                     target="_blank" rel="noopener noreferrer">Contacter Ba en jeu</a>
             </aside>
         </div>
@@ -138,7 +146,8 @@
     aria-labelledby="announcement-dialog-title" aria-modal="true">
     <div class="request-dialog__content">
         <header class="request-dialog__header">
-            <span class="request-dialog__emblem" aria-hidden="true">✦</span>
+            <img class="request-dialog__emblem" src="/static/images/LogoMR05.png" alt="" aria-hidden="true" width="52"
+                height="52">
             <div>
                 <p class="eyebrow">Au tableau de la communauté</p>
                 <h2 id="announcement-dialog-title">Faites passer le message !</h2>
@@ -177,8 +186,7 @@
                         <p>Matricule : 121</p>
                     </div>
                 </div>
-                <a class="button-link request-contact__button"
-                    href="https://www.angemoniaque.com/event?personnage=121"
+                <a class="button-link request-contact__button" href="https://www.angemoniaque.com/event?personnage=121"
                     target="_blank" rel="noopener noreferrer">Contacter Ba en jeu</a>
             </aside>
         </div>

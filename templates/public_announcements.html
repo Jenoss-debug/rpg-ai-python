@@ -6,8 +6,14 @@
 
 {% block content %}
 <section class="public-announcements" aria-labelledby="announcements-title">
-    <p class="eyebrow">Le tableau de la guilde</p>
-    <h1 id="announcements-title">Annonces ouvertes</h1>
+    <header class="public-announcements-heading">
+        <div>
+            <p class="eyebrow">Le tableau de la guilde</p>
+            <h1 id="announcements-title">Annonces ouvertes</h1>
+        </div>
+        <img src="/static/images/LogoMR04.png" alt="" aria-hidden="true"
+            width="72" height="78" decoding="async">
+    </header>
     <p>Les missions marquées publiques et ouvertes à de nouveaux coursiers.</p>
 
     {% if missions %}

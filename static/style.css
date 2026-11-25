@@ -1211,7 +1211,7 @@ body.map-canvas-page .route-grid-frame {
     margin: 0;
     color: var(--color-wood-deep);
     font-family: var(--font-display);
-    font-size: clamp(1.7rem, 3vw, 3rem);
+    font-size: clamp(2rem, 2vw, 2rem);
     line-height: 1.05;
 }
 
@@ -1340,6 +1340,7 @@ body.map-canvas-page .route-grid-frame {
 }
 
 .public-board-publish {
+    gap: 0.4rem;
     min-height: 36px;
     padding: 0.35rem 0.6rem;
     border: 1px solid rgba(243, 210, 143, 0.68);
@@ -1348,6 +1349,13 @@ body.map-canvas-page .route-grid-frame {
     color: #fff1d2;
     font: 700 0.86rem/1.2 var(--font-body);
     text-align: left;
+}
+
+.public-board-publish img {
+    width: 1.6rem;
+    height: 1.6rem;
+    flex: 0 0 auto;
+    object-fit: contain;
 }
 
 .public-board-publish:hover {
@@ -1409,6 +1417,19 @@ body.map-canvas-page .route-grid-frame {
     background: var(--color-green);
 }
 
+.scene-door-link img {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex: 0 0 auto;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 2px rgba(20, 14, 10, 0.35));
+}
+
+.scene-door-link--join img {
+    width: 1.55rem;
+    height: 1.8rem;
+}
+
 .request-dialog {
     width: min(42rem, calc(100vw - 1.5rem));
     max-width: 42rem;
@@ -1457,22 +1478,12 @@ body.map-canvas-page .route-grid-frame {
 }
 
 .request-dialog__emblem {
-    display: grid;
-    width: 3rem;
-    height: 3rem;
-    flex: 0 0 3rem;
-    place-items: center;
-    border: 2px solid rgba(233, 216, 181, 0.9);
-    border-radius: 50%;
-    background: var(--color-wood);
-    box-shadow: 0 0 0 2px var(--color-leather);
-    color: #fff1d2;
-    font-family: var(--font-display);
-    font-size: 1.35rem;
-}
-
-.request-dialog--courier .request-dialog__emblem {
-    background: var(--color-green);
+    display: block;
+    width: 3.35rem;
+    height: 3.35rem;
+    flex: 0 0 3.35rem;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(48, 34, 27, 0.28));
 }
 
 .request-dialog__header .eyebrow {
@@ -1610,6 +1621,27 @@ body.map-canvas-page .route-grid-frame {
     box-shadow: var(--shadow-panel);
 }
 
+.public-announcements-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.public-announcements-heading .eyebrow,
+.public-announcements-heading h1 {
+    margin-block: 0;
+}
+
+.public-announcements-heading img {
+    width: 4.5rem;
+    height: 4.9rem;
+    flex: 0 0 auto;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 4px rgba(48, 34, 27, 0.2));
+}
+
 .guild-introduction h2,
 .public-announcements h1 {
     margin-top: 0;
@@ -1744,10 +1776,9 @@ body.map-canvas-page .route-grid-frame {
     }
 
     .request-dialog__emblem {
-        width: 2.5rem;
-        height: 2.5rem;
-        flex-basis: 2.5rem;
-        font-size: 1.15rem;
+        width: 2.8rem;
+        height: 2.8rem;
+        flex-basis: 2.8rem;
     }
 
     .request-dialog__close {
@@ -1892,6 +1923,11 @@ body.map-canvas-page .route-grid-frame {
     .guild-introduction,
     .public-announcements {
         padding: 1.15rem;
+    }
+
+    .public-announcements-heading img {
+        width: 3.5rem;
+        height: 3.8rem;
     }
 
     .guild-features,
