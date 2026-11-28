@@ -22,6 +22,14 @@ const VARIANT_SHADES = [
     { number: 3 },
     { number: 4, target: 0, amount: 0.2 }
 ];
+const TERRAIN_VARIANT_COLOR_OVERRIDES = Object.freeze({
+    forest: Object.freeze({
+        1: "#406147",
+        2: "#4a6b52",
+        3: "#455f3f",
+        4: "#375131"
+    })
+});
 
 function getColorChannels(color) {
     const match = /^#([\da-f]{6})$/i.exec(color);
@@ -58,10 +66,17 @@ export function getTerrainVariants(code) {
     const terrain = getTerrainByCode(code);
     const channels = getColorChannels(terrain.color);
 
-    return VARIANT_SHADES.map((shade) => ({
-        number: shade.number,
-        color: shade.number === 3
-            ? terrain.color
-            : makeShade(channels, shade.target, shade.amount)
-    }));
+    return VARIANT_SHADES.map((shade) => {
+        const colorOverride = TERRAIN_VARIANT_COLOR_OVERRIDES[code]?.[
+            shade.number
+        ];
+        return {
+            number: shade.number,
+            color: colorOverride ?? (
+                shade.number === 3
+                    ? terrain.color
+                    : makeShade(channels, shade.target, shade.amount)
+            )
+        };
+    });
 }

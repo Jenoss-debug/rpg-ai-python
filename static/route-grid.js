@@ -1,4 +1,4 @@
-import { createHexGrid } from "./hex-grid.js";
+import { createHexGrid, drawForestTrees } from "./hex-grid.js";
 import { createSelectedCellPanel } from "./selected-cell-panel.js";
 import {
     getTerrainByCode,
@@ -126,10 +126,29 @@ if (canvas instanceof HTMLCanvasElement) {
                         return;
                     }
 
-                    context.fillStyle = variantColors.get(
+                    const backgroundColor = variantColors.get(
                         paint.terrainCode
                     ).get(paint.variant);
+                    context.fillStyle = backgroundColor;
                     context.fill();
+                },
+                onCellOverlay(context, cell, geometry) {
+                    const paint = paintedCells.get(`${cell.x};${cell.y}`);
+                    if (
+                        !paint
+                        || (paint.terrainCode !== "forest"
+                            && paint.terrainCode !== "deep_forest")
+                    ) {
+                        return;
+                    }
+
+                    drawForestTrees(
+                        context,
+                        geometry,
+                        paint.terrainCode,
+                        paint.variant,
+                        variantColors.get(paint.terrainCode).get(paint.variant)
+                    );
                 },
                 onSelectionChange(cell) {
                     updateSelectedCellPanel(cell, getCellDetails(cell));

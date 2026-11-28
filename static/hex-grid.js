@@ -2,6 +2,171 @@
  * Pages can customize gestures and pass overlay elements as interaction blockers.
  */
 const INITIAL_ZOOM = 0.45;
+const FOREST_TREE_LAYOUTS = Object.freeze({
+    forest: Object.freeze({
+        1: [
+            [-0.17, -0.16, 0.74, 0.82],
+            [0.17, -0.17, 0.92, 0.72],
+            [-0.04, 0.34, 0.82, 0.96]
+        ],
+        2: [
+            [-0.38, -0.27, 0.78, 0.9],
+            [0.38, -0.2, 0.96, 0.78],
+            [0, 0.42, 0.84, 0.96]
+        ],
+        3: [
+            [-0.08, -0.01, 0.88, 0.92],
+            [0.08, 0.01, 0.88, 0.76],
+            [0.47, 0.18, 0.76, 0.98]
+        ],
+        4: [
+            [-0.08, -0.04, 1, 1],
+            [0.24, -0.12, 0.7, 0.76],
+            [-0.52, -0.02, 0.64, 0.88]
+        ]
+    }),
+    deep_forest: Object.freeze({
+        1: [
+            [-0.35, -0.35, 0.72, 0.86],
+            [0.35, -0.35, 0.84, 0.72],
+            [-0.42, 0.08, 0.98, 0.94],
+            [0.42, 0.08, 0.78, 0.78],
+            [0, 0.48, 0.9, 0.68]
+        ],
+        2: [
+            [0, -0.48, 0.76, 0.94],
+            [-0.4, -0.1, 0.9, 0.76],
+            [0.4, -0.1, 0.72, 0.86],
+            [-0.35, 0.38, 0.98, 0.7],
+            [0.35, 0.38, 0.84, 0.8]
+        ],
+        3: [
+            [-0.4, -0.34, 0.84, 0.76],
+            [0, -0.34, 0.72, 0.96],
+            [0.4, -0.34, 0.94, 0.82],
+            [-0.4, 0.24, 0.78, 0.7],
+            [0.4, 0.24, 0.98, 0.9]
+        ],
+        4: [
+            [-0.35, -0.38, 0.9, 0.72],
+            [0.35, -0.38, 0.74, 0.9],
+            [-0.35, 0.22, 0.98, 0.78],
+            [0.35, 0.22, 0.82, 0.96],
+            [0, 0.5, 0.7, 0.82]
+        ]
+    })
+});
+const forestTreeColorCache = new Map();
+
+function getForestTreeColors(backgroundColor) {
+    if (!forestTreeColorCache.has(backgroundColor)) {
+        const match = /^#([\da-f]{6})$/i.exec(backgroundColor);
+        if (!match) {
+            throw new RangeError(`Invalid forest background color: ${backgroundColor}`);
+        }
+
+        const channels = [0, 2, 4].map((offset) => (
+            Number.parseInt(match[1].slice(offset, offset + 2), 16)
+        ));
+        const makeShade = (sourceChannels, factor) => `#${sourceChannels.map((channel) => (
+            Math.round(channel * factor).toString(16).padStart(2, "0")
+        )).join("")}`;
+        forestTreeColorCache.set(backgroundColor, {
+            tree: makeShade(channels, 0.86),
+            shadow: makeShade(channels, 0.74)
+        });
+    }
+
+    return forestTreeColorCache.get(backgroundColor);
+}
+
+function drawTreeTriangle(context, x, y, width, height) {
+    context.beginPath();
+    context.moveTo(x, y - height / 2);
+    context.lineTo(x + width / 2, y + height / 2);
+    context.lineTo(x - width / 2, y + height / 2);
+    context.closePath();
+    context.fill();
+}
+
+export function drawForestTrees(
+    context,
+    geometry,
+    terrainCode,
+    variant,
+    backgroundColor
+) {
+    const layout = FOREST_TREE_LAYOUTS[terrainCode]?.[variant];
+    if (!layout) {
+        return;
+    }
+
+    const isForestVariantOne = (
+        terrainCode === "forest" && variant === 1
+    );
+    const isForestVariantTwo = (
+        terrainCode === "forest" && variant === 2
+    );
+    const isForestVariantThree = (
+        terrainCode === "forest" && variant === 3
+    );
+    const isForestVariantFour = (
+        terrainCode === "forest" && variant === 4
+    );
+    const hasCustomForestTrees = (
+        isForestVariantOne
+        || isForestVariantTwo
+        || isForestVariantThree
+        || isForestVariantFour
+    );
+    const forestColors = getForestTreeColors(backgroundColor);
+    const tree = isForestVariantThree || isForestVariantFour
+        ? "#3f6135"
+        : hasCustomForestTrees
+            ? "#456d49"
+            : forestColors.tree;
+    const shadow = isForestVariantOne
+        ? "#294634"
+        : isForestVariantTwo
+            ? "#274333"
+            : isForestVariantThree
+                ? "#20361d"
+                : isForestVariantFour
+                    ? "#20361d"
+                    : forestColors.shadow;
+    const isDeepForest = terrainCode === "deep_forest";
+    const baseWidth = geometry.radius * (
+        isDeepForest ? 0.34 : isForestVariantThree ? 0.36 : 0.46
+    );
+    const baseHeight = geometry.radius * (isDeepForest ? 0.36 : 0.48);
+
+    context.save();
+    for (const [offsetX, offsetY, widthScale, heightScale] of layout) {
+        const x = geometry.centerX + offsetX * geometry.radius;
+        const y = geometry.centerY + offsetY * geometry.radius;
+        const treeWidth = baseWidth * widthScale;
+        const treeHeight = hasCustomForestTrees
+            ? treeWidth * Math.sqrt(3) / 2
+            : baseHeight * heightScale;
+        const shadowWidth = treeWidth * 0.9;
+        const shadowHeight = hasCustomForestTrees
+            ? shadowWidth * Math.sqrt(3) / 2
+            : treeHeight * 0.9;
+        const shadowOffset = treeHeight * 0.14;
+
+        context.fillStyle = shadow;
+        drawTreeTriangle(
+            context,
+            x,
+            y + shadowOffset,
+            shadowWidth,
+            shadowHeight
+        );
+        context.fillStyle = tree;
+        drawTreeTriangle(context, x, y, treeWidth, treeHeight);
+    }
+    context.restore();
+}
 
 export function createHexGrid(canvas, options = {}) {
     if (!(canvas instanceof HTMLCanvasElement)) {
@@ -19,8 +184,11 @@ export function createHexGrid(canvas, options = {}) {
     const minZoom = options.minZoom ?? 0.1;
     const maxZoom = options.maxZoom ?? 3;
     const zoomFactor = options.zoomFactor ?? 1.15;
-    const recenterStartZoom = options.recenterStartZoom ?? 0.6;
-    const coordinateZoomThreshold = options.coordinateZoomThreshold ?? 0.75;
+    const threeZoomOutSteps = zoomFactor ** 2;
+    const recenterStartZoom = (options.recenterStartZoom ?? 0.6)
+        / threeZoomOutSteps;
+    const coordinateZoomThreshold = (options.coordinateZoomThreshold ?? 0.75)
+        / threeZoomOutSteps;
     const dragThreshold = 4;
     const mode = options.interactionMode ?? {};
     const interactionBlockers = options.interactionBlockers ?? [];
@@ -188,13 +356,14 @@ export function createHexGrid(canvas, options = {}) {
 
         const isHovered = sameCell(cell, hoveredCell);
         const isSelected = sameCell(cell, selectedCell);
-        options.onCellRender?.(context, cell, {
+        const geometry = {
             centerX,
             centerY,
             radius: hexRadius,
             width: hexWidth,
             height: hexHeight
-        });
+        };
+        options.onCellRender?.(context, cell, geometry);
 
         if (isHovered) {
             context.fillStyle = "rgba(255, 255, 255, 0.1)";
@@ -212,13 +381,23 @@ export function createHexGrid(canvas, options = {}) {
         context.lineWidth = 1 / zoom;
         context.stroke();
 
-        if (coordinatesVisible && zoom >= coordinateZoomThreshold) {
-            const fontSize = Math.max(9, Math.min(14, 12 * zoom));
-            context.fillStyle = "#eeeeee";
-            context.font = `${fontSize / zoom}px Arial, sans-serif`;
-            context.textAlign = "center";
-            context.textBaseline = "middle";
-            context.fillText(`${cell.x};${cell.y}`, centerX, centerY);
+        if (zoom >= coordinateZoomThreshold) {
+            options.onCellOverlay?.(context, cell, geometry);
+
+            if (coordinatesVisible) {
+                const fontSize = Math.max(9, Math.min(14, 12 * zoom));
+                context.save();
+                context.fillStyle = "#e6e6e6";
+                context.strokeStyle = "#000000";
+                context.lineWidth = 2 / zoom;
+                context.font = `${fontSize / zoom}px Arial, sans-serif`;
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                const coordinates = `${cell.x};${cell.y}`;
+                context.strokeText(coordinates, centerX, centerY);
+                context.fillText(coordinates, centerX, centerY);
+                context.restore();
+            }
         }
     }
 
